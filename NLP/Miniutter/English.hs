@@ -24,7 +24,8 @@ data Part =
   | Compound Part Part  -- ^ separated with space, should very rarely be needed
   | SubjectVerb Part Part     -- ^ requires conjugation
   | NotSubjectVerb Part Part  -- ^ negated
-  | QSubjectVerb Part Part    -- ^ question
+  | QSubjectVerb Part Part    -- ^ question; add question mark by hand
+  deriving Show
 
 -- | Realise a complete clause, capitalized, ending with a dot.
 makeClause :: [Part] -> Text
