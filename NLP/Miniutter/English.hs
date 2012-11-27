@@ -34,7 +34,7 @@ makeClause l = capitalize $ makePhrase l `T.snoc` '.'
 
 -- | Realise a fraction of a clause.
 makePhrase :: [Part] -> Text
-makePhrase = T.intercalate (T.singleton ' ') . map makePart
+makePhrase = T.intercalate (T.singleton ' ') . makeParts
 
 makePart :: Part -> Text
 makePart (String t) = T.pack t
@@ -49,13 +49,16 @@ makePart (AW p) =
   in indefiniteDet t <> t
 makePart (WWandW lp) =
   let i = T.pack "and"
-      lt = map makePart lp
+      lt = makeParts lp
   in commas i lt  -- TODO: generalize
 makePart (W_sW p_s p) = undefined
-makePart (Compound p1 p2) = (makePart p1) <+> (makePart p2)
+makePart (Compound p1 p2) = makePhrase [p1, p2]
 makePart (SubjectVerb s v) = undefined
 makePart (NotSubjectVerb s v) = undefined
 makePart (QSubjectVerb s v) = undefined
+
+makeParts :: [Part] -> [Text]
+makeParts = filter (not . T.null) . map makePart
 
 -- | Capitalize text.
 capitalize :: Text -> Text
