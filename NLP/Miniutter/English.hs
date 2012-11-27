@@ -1,6 +1,7 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
-  ( Part(..), makeClause, makePhrase
+  ( Part(..), makeClause, makePhrase, defIrrp
   ) where
 
 import Data.Char (toUpper)
@@ -8,6 +9,8 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import NLP.Minimorph.English
 import NLP.Minimorph.Util
+import Data.Map (Map)
+import qualified Data.Map as Map
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -28,40 +31,92 @@ data Part =
   | QSubjectVerb Part Part    -- ^ question; add question mark by hand
   deriving Show
 
+-- | Nouns with irregular plural forms.
+type IrrPlural = Map Text Text
+
 -- | Realise a complete clause, capitalized, ending with a dot.
-makeClause :: [Part] -> Text
-makeClause l = capitalize $ makePhrase l `T.snoc` '.'
+makeClause :: IrrPlural -> [Part] -> Text
+makeClause irrp l = capitalize $ makePhrase irrp l `T.snoc` '.'
 
 -- | Realise a fraction of a clause.
-makePhrase :: [Part] -> Text
-makePhrase = T.intercalate (T.singleton ' ') . makeParts
+makePhrase :: IrrPlural -> [Part] -> Text
+makePhrase irrp = T.intercalate (T.singleton ' ') . makeParts irrp
 
-makePart :: Part -> Text
-makePart (String t) = T.pack t
-makePart (Text t) = t
-makePart (Cardinal n) = cardinal n
-makePart (Ws p) = defaultNounPlural (makePart p)
-makePart (NWs n p) = T.pack (show n) <+> defaultNounPlural (makePart p)
-makePart (Ordinal n) = ordinal n
-makePart (NthW n p) = undefined
-makePart (AW p) =
-  let t = makePart p
-  in indefiniteDet t <> t
-makePart (WWandW lp) =
-  let i = T.pack "and"
-      lt = makeParts lp
-  in commas i lt  -- TODO: generalize
-makePart (W_sW p_s p) = undefined
-makePart (Compound p1 p2) = makePhrase [p1, p2]
-makePart (SubjectVerb s v) = undefined
-makePart (NotSubjectVerb s v) = undefined
-makePart (QSubjectVerb s v) = undefined
+makePart :: IrrPlural -> Part -> Text
+makePart irrp part = case part of
+  String t -> T.pack t
+  Text t -> t
+  Cardinal n -> cardinal n
+  Ws p -> makePlural irrp (makePart irrp p)
+  NWs n p -> T.pack (show n) <+> makePlural irrp (makePart irrp p)
+  Ordinal n -> ordinal n
+  NthW n p -> undefined  -- 1st
+  AW p -> let t = makePart irrp p
+          in indefiniteDet t <+> t
+  WWandW lp -> let i = "and"
+                   lt = makeParts irrp lp
+               in commas i lt  -- TODO: generalize
+  W_sW p_s p -> makePhrase irrp [p_s, p]  -- TODO
+  Compound p1 p2 -> makePhrase irrp [p1, p2]
+  SubjectVerb s v -> makePhrase irrp [s, v]  -- TODO
+  NotSubjectVerb s v -> makePhrase irrp [s, v]  -- TODO
+  QSubjectVerb s v -> makePhrase irrp [v, s]  -- TODO
 
-makeParts :: [Part] -> [Text]
-makeParts = filter (not . T.null) . map makePart
+makeParts :: IrrPlural -> [Part] -> [Text]
+makeParts irrp = filter (not . T.null) . map (makePart irrp)
 
 -- | Capitalize text.
 capitalize :: Text -> Text
 capitalize t = case T.uncons t of
   Nothing        -> T.empty
   Just (c, rest) -> T.cons (toUpper c) rest
+
+makePlural :: IrrPlural -> Text -> Text
+makePlural irrp t =
+  case Map.lookup t irrp of
+    Just u  -> u
+    Nothing -> defaultNounPlural t
+
+-- | Default set of nouns with irregular plural forms.
+defIrrp :: IrrPlural
+defIrrp = Map.fromList
+  [ ("canto",       "cantos")
+  , ("homo ",       "homos")
+  , ("photo",       "photos")
+  , ("zero",        "zeros")
+  , ("piano",       "pianos")
+  , ("portico",     "porticos")
+  , ("pro",         "pros")
+  , ("quarto",      "quartos")
+  , ("kimono",      "kimonos")
+  , ("calf",        "calves")
+  , ("leaf",        "leaves")
+  , ("knife",       "knives")
+  , ("life",        "lives")
+  , ("dwarf",       "dwarfs")  -- not for ME dwarves, though
+  , ("hoof",        "hooves")
+  , ("elf",         "elves")
+  , ("staff",       "staves")  -- depends on the meaning :<
+  , ("child",       "children")
+  , ("foot",        "feet")
+  , ("goose",       "geese")
+  , ("louse",       "lice")
+  , ("man",         "men")
+  , ("mouse",       "mice")
+  , ("tooth",       "teeth")
+  , ("woman",       "women")
+  , ("buffalo",     "buffalo")
+  , ("deer",        "deer")
+  , ("moose",       "moose")
+  , ("sheep",       "sheep")
+  , ("bison",       "bison")
+  , ("salmon",      "salmon")
+  , ("pike",        "pike")
+  , ("trout",       "trout")
+  , ("swine",       "swine")
+  , ("aircraft",    "aircraft")
+  , ("watercraft",  "watercraft")
+  , ("spacecraft",  "spacecraft")
+  , ("hovercraft",  "hovercraft")
+  , ("information", "information")
+  ]

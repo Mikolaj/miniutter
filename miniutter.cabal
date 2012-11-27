@@ -31,7 +31,8 @@ library
 --  other-modules:
   build-depends:      base == 4.*,
                       minimorph,
-                      text
+                      text,
+                      containers >= 0.4.1 && < 1
 
   default-language:   Haskell2010
   default-extensions: MonoLocalBinds,
@@ -47,9 +48,10 @@ test-suite test-miniutter
   build-depends:      miniutter,
                       base == 4.*,
                       text,
-                      test-framework       >= 0.6 && < 0.7,
-                      test-framework-hunit >= 0.2 && < 0.3,
-                      HUnit                >= 1.2 && < 1.3
+                      containers           >= 0.4.1 && < 1,
+                      test-framework       >= 0.6   && < 0.7,
+                      test-framework-hunit >= 0.2   && < 0.3,
+                      HUnit                >= 1.2   && < 1.3
 
   default-language:   Haskell2010
   default-extensions: MonoLocalBinds,

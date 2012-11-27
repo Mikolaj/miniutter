@@ -30,7 +30,7 @@ tests =
 tp :: [MU.Part] -> T.Text -> Test
 tp arg expect =
   testCase ("testPhrase " ++ show arg)
-  $ let obtain = MU.makePhrase arg
+  $ let obtain = MU.makePhrase MU.defIrrp arg
     in assertEqual (T.unpack expect ++ " == " ++ T.unpack obtain) expect obtain
 
 testMakePhraseVerbatim :: Test
@@ -97,10 +97,10 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.Text "leaf")]       "leaves"
   , tp [MU.Ws (MU.Text "knife")]      "knives"
   , tp [MU.Ws (MU.Text "life")]       "lives"
-  , tp [MU.Ws (MU.Text "dwarf")]      "dwarfs"  -- not for Tolkien dwarves
+  , tp [MU.Ws (MU.Text "dwarf")]      "dwarfs"
   , tp [MU.Ws (MU.Text "hoof")]       "hooves"
   , tp [MU.Ws (MU.Text "elf")]        "elves"
---, tp [MU.Ws (MU.Text "staff")]      "staves"  -- depends on meaning :(
+--, tp [MU.Ws (MU.Text "staff")]      "staves"  -- depends on the meaning :(
   , tp [MU.Ws (MU.Text "child")]      "children"
   , tp [MU.Ws (MU.Text "foot")]       "feet"
   , tp [MU.Ws (MU.Text "goose")]      "geese"
