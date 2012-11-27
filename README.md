@@ -17,11 +17,11 @@ and issue tracker is on [github] [2].
 Further information
 -------------------
 
-The library emerged when the needs of the LambdaHack [3] game engine
+The library emerged when the needs of the [LambdaHack] [3] game engine
 outgrew its rudimentary grammar code written by Andres Loeh.
 The library uses [minimorph] [4] by Eric Kow to tackle English spelling.
 More information about natural language processing libraries in Haskell
-is gathered on [Haskell wiki] [5].
+is gathered at the [Haskell wiki] [5].
 
 [1]: http://hackage.haskell.org/package/miniutter
 [2]: https://github.com/Mikolaj/miniutter
