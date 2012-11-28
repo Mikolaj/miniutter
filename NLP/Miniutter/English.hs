@@ -50,7 +50,7 @@ makePart irrp part = case part of
   Ws p -> makePlural irrp (makePart irrp p)
   NWs n p -> T.pack (show n) <+> makePlural irrp (makePart irrp p)
   Ordinal n -> ordinal n
-  NthW n p -> undefined  -- 1st
+  NthW n p -> ordinalNotSpelled n <+> makePart irrp p
   AW p -> let t = makePart irrp p
           in indefiniteDet t <+> t
   WWandW lp -> let i = "and"
@@ -76,6 +76,22 @@ makePlural irrp t =
   case Map.lookup t irrp of
     Just u  -> u
     Nothing -> defaultNounPlural t
+
+-- TODO: move to minimorph; fix ordinal
+-- | > ordinal 1 == "1st"
+--   > ordinal 2 == "2nd"
+--   > ordinal 3 == "3rd"
+--   > ordinal 11 == "11th"
+--   > ordinal 42 == "42nd"
+ordinalNotSpelled :: Int -> Text
+ordinalNotSpelled k = case abs $ k `rem` 100 of
+  n | n > 3 && n < 21 -> k `suf` "th"
+    | n `rem` 10 == 1 -> k `suf` "st"
+    | n `rem` 10 == 2 -> k `suf` "nd"
+    | n `rem` 10 == 3 -> k `suf` "rd"
+    | otherwise       -> k `suf` "th"
+ where
+  num `suf` s = T.pack (show num) <> s
 
 -- | Default set of nouns with irregular plural forms.
 defIrrp :: IrrPlural
