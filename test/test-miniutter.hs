@@ -20,8 +20,8 @@ tests =
     , testMakePhraseNumber
     , testMakePhraseIndefinite
     , testMakePhraseEnumeration
-{-    , testMakePhrasePossesive
-    , testMakePhraseSubjectVerb
+    , testMakePhrasePossesive
+{-    , testMakePhraseSubjectVerb
     , testMakePhraseNegation
     , testMakePhraseQuestion -}
     ]
@@ -133,7 +133,9 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.WWxW (MU.Text "and also")
                        [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
                                           "dog, eagle and also parrots"
-  , tp [MU.Ws (MU.W_sW (MU.Text "uncle") (MU.Text "dog"))]
+  , tp [MU.Ws (MU.Wown (MU.Text "uncle"))]
+                                          "uncle'ses"
+  , tp [MU.Ws (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
                                           "uncle's dogs"
   , tp [MU.Ws (MU.Compound (MU.Text "uncle") (MU.Text "dog"))]
                                           "uncle dogs"
@@ -212,7 +214,9 @@ testMakePhraseIndefinite = testGroup "indefinite article"
   , tp [MU.AW (MU.WWxW (MU.Text "or otherwise")
                        [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
                                           "a dog, eagle or otherwise parrot"
-  , tp [MU.AW (MU.W_sW (MU.Text "uncle") (MU.Text "dog"))]
+  , tp [MU.AW (MU.Wown (MU.Text "uncle"))]
+                                          "an uncle's"
+  , tp [MU.AW (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
                                           "an uncle's dog"
   , tp [MU.AW (MU.Compound (MU.Text "uncle") (MU.Text "dog"))]
                                           "an uncle dog"
@@ -239,4 +243,55 @@ testMakePhraseEnumeration = testGroup "enumeration and collection"
   , tp [MU.WWxW (MU.Text " and perhaps%")
                 [MU.Text " dog ", MU.Text "", MU.Text "%eagle."]]
                                           " dog   and perhaps% %eagle."
+  ]
+
+testMakePhrasePossesive :: Test
+testMakePhrasePossesive = testGroup "the possesive form"
+  [ tp [MU.Wown (MU.String "uncle")]                    "uncle's"
+  , tp [MU.Wown (MU.String " uncle ")]                  " uncle "
+  , tp [MU.Wown (MU.Text "")]                           ""
+  , tp [MU.Wown (MU.Text " ")]                          " "
+  , tp [MU.Wown (MU.Text "miss")]                       "miss'"
+  , tp [MU.Wown (MU.Text "YQS")]                        "YQS'"
+  , tp [MU.Wown (MU.Text "buzz")]                       "buzz's"
+  , tp [MU.Wown (MU.Text "box")]                        "box's"
+  , tp [MU.Wown (MU.Text "Who")]                        "Whose"
+  , tp [MU.Wown (MU.Text "I")]                          "mine"
+  , tp [MU.Wown (MU.Text "you")]                        "yours"
+  , tp [MU.Wown (MU.Text "he")]                         "his"
+  , tp [MU.Wown (MU.Text "She")]                        "Her"
+  , tp [MU.Wown (MU.Text "it")]                         "its"
+  , tp [MU.Wown (MU.Text "We")]                         "Ours"
+  , tp [MU.Wown (MU.Text "they")]                       "theirs"
+  , tp [MU.WownW (MU.String "uncle") (MU.String "dog")] "uncle's dog"
+  , tp [MU.WownW (MU.Text " uncle ") (MU.Text "dog")]   " uncle  dog"
+  , tp [MU.WownW (MU.Text "I") (MU.Text "")]            "my"
+  , tp [MU.WownW (MU.Text "") (MU.Text "dog")]          "dog"
+  , tp [MU.WownW (MU.Text "") (MU.Text "")]             ""
+  , tp [MU.WownW (MU.Text " ") (MU.Text " ")]           "   "
+  , tp [MU.WownW (MU.Text "miss") (MU.Text "dog")]      "miss' dog"
+  , tp [MU.WownW (MU.Text "YQS") (MU.Cardinal 33)]      "YQS' 33"
+  , tp [MU.WownW (MU.Text "buzz") (MU.Ordinal 21)]      "buzz's 21st"
+  , tp [MU.WownW (MU.Text "box") (MU.Text "")]          "box's"
+  , tp [MU.WownW (MU.Text "who") (MU.Text "dog")]       "whose dog"
+  , tp [MU.WownW (MU.Text "I") (MU.Text "dog")]         "my dog"
+  , tp [MU.WownW (MU.Text "you") (MU.Text "dog")]       "your dog"
+  , tp [MU.WownW (MU.Text "He") (MU.Text "dog")]        "His dog"
+  , tp [MU.WownW (MU.Text "she") (MU.Text "dog")]       "her dog"
+  , tp [MU.WownW (MU.Text "It") (MU.Text "dog")]        "Its dog"
+  , tp [MU.WownW (MU.Text "we") (MU.Text "dog")]        "our dog"
+  , tp [MU.WownW (MU.Text "They") (MU.Text "dog")]      "Their dog"
+  , tp [MU.Wown (MU.NWs 6 (MU.Text ""))]                "6's"
+  , tp [MU.Wown (MU.NthW 1 (MU.Text ""))]               "1st's"
+  , tp [MU.Wown (MU.Ws (MU.NWs 6 (MU.Text "")))]        "6es'"
+  , tp [MU.Wown (MU.WWandW [MU.Text "I", MU.Text "you"])]
+                                                        "I and yours"
+  , tp [MU.Wown (MU.WWandW [MU.Text "you", MU.Text "I"])]
+                                                        "you and mine"
+  , tp [MU.WownW (MU.WWandW [MU.Text "you", MU.Text "I"]) (MU.Text "dog")]
+                                                        "you and my dog"
+  , tp [MU.Wown (MU.Wown (MU.Text "it"))]               "its'"
+  , tp [MU.Wown (MU.Wown (MU.Wown (MU.Text "it")))]     "its's"
+  , tp [MU.Wown (MU.QSubjectVerb (MU.Text "I") (MU.Text "do"))]
+                                                        "do mine"
   ]

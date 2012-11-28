@@ -25,7 +25,8 @@ data Part =
   | AW Part             -- ^ word with indefinite article
   | WWandW [Part]       -- ^ enumeration
   | WWxW Part [Part]    -- ^ collection
-  | W_sW Part Part      -- ^ possesive
+  | Wown Part           -- ^ non-premodifying possesive
+  | WownW Part Part     -- ^ attributive possesive
   | Compound Part Part  -- ^ separated with space, should very rarely be needed
   | SubjectVerb Part Part     -- ^ requires conjugation
   | NotSubjectVerb Part Part  -- ^ negated
@@ -60,7 +61,8 @@ makePart irrp part = case part of
   WWxW x lp -> let i = makePart irrp x
                    lt = makeParts irrp lp
                in commas i lt
-  W_sW p_s p -> makePhrase irrp [p_s, p]  -- TODO
+  Wown p -> makePart irrp p  -- TODO
+  WownW p1 p2 -> makePart irrp p2 <+> makePart irrp p2  -- TODO
   Compound p1 p2 -> makePhrase irrp [p1, p2]
   SubjectVerb s v -> makePhrase irrp [s, v]  -- TODO
   NotSubjectVerb s v -> makePhrase irrp [s, v]  -- TODO
