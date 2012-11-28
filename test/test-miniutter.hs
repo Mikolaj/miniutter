@@ -21,9 +21,7 @@ tests =
     , testMakePhraseIndefinite
     , testMakePhraseEnumeration
     , testMakePhrasePossesive
-{-    , testMakePhraseSubjectVerb
-    , testMakePhraseNegation
-    , testMakePhraseQuestion -}
+--    , testMakePhraseSubjectVerb
     ]
   ]
 
@@ -294,4 +292,6 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.Wown (MU.Wown (MU.Wown (MU.Text "it")))]     "its's"
   , tp [MU.Wown (MU.QSubjectVerb (MU.Text "I") (MU.Text "do"))]
                                                         "do mine"
+  , tp [MU.Wown (MU.Text " do   I")]                    " do   mine"
+  , tp [MU.Wown (MU.Text " do   I ")]                   " do   I "
   ]

@@ -4,7 +4,7 @@ module NLP.Miniutter.English
   ( Part(..), makeClause, makePhrase, defIrrp
   ) where
 
-import Data.Char (toUpper)
+import Data.Char (toUpper, isSpace)
 import Data.Text (Text)
 import qualified Data.Text as T
 import NLP.Minimorph.English
@@ -61,8 +61,8 @@ makePart irrp part = case part of
   WWxW x lp -> let i = makePart irrp x
                    lt = makeParts irrp lp
                in commas i lt
-  Wown p -> makePart irrp p  -- TODO
-  WownW p1 p2 -> makePart irrp p2 <+> makePart irrp p2  -- TODO
+  Wown p -> onLastWord nonPremodifying (makePart irrp p)
+  WownW p1 p2 -> onLastWord attributive (makePart irrp p1) <+> makePart irrp p2
   Compound p1 p2 -> makePhrase irrp [p1, p2]
   SubjectVerb s v -> makePhrase irrp [s, v]  -- TODO
   NotSubjectVerb s v -> makePhrase irrp [s, v]  -- TODO
@@ -98,6 +98,58 @@ ordinalNotSpelled k = case abs $ k `rem` 100 of
     | otherwise       -> k `suf` "th"
  where
   num `suf` s = T.pack (show num) <> s
+
+defaultPossesive :: Text -> Text
+defaultPossesive "" = ""
+defaultPossesive t =
+  case T.last t of
+    's'  -> t <> "'"
+    'S'  -> t <> "'"
+    '\'' -> t <> "s"
+    ' '  -> t  -- TODO: more cases? or check if alpha?
+    _    -> t <> "'s"
+
+onLastWord :: (Text -> Text) -> Text -> Text
+onLastWord f t =
+  let (breakPrefix, breakRest) = T.break isSpace $ T.reverse t
+      (ending, rest) = (T.reverse breakPrefix, T.reverse breakRest)
+  in rest <> f ending
+
+nonPremodifying :: Text -> Text
+nonPremodifying "who"  = "whose"
+nonPremodifying "Who"  = "Whose"
+nonPremodifying "I"    = "mine"
+nonPremodifying "you"  = "yours"
+nonPremodifying "You"  = "Yours"
+nonPremodifying "he"   = "his"
+nonPremodifying "He"   = "His"
+nonPremodifying "she"  = "her"
+nonPremodifying "She"  = "Her"
+nonPremodifying "it"   = "its"
+nonPremodifying "It"   = "Its"
+nonPremodifying "we"   = "ours"
+nonPremodifying "We"   = "Ours"
+nonPremodifying "they" = "theirs"
+nonPremodifying "They" = "Theirs"
+nonPremodifying t = defaultPossesive t
+
+attributive :: Text -> Text
+attributive "who"  = "whose"
+attributive "Who"  = "Whose"
+attributive "I"    = "my"
+attributive "you"  = "your"
+attributive "You"  = "Your"
+attributive "he"   = "his"
+attributive "He"   = "His"
+attributive "she"  = "her"
+attributive "She"  = "Her"
+attributive "it"   = "its"
+attributive "It"   = "Its"
+attributive "we"   = "our"
+attributive "We"   = "Our"
+attributive "they" = "their"
+attributive "They" = "Their"
+attributive t = defaultPossesive t
 
 -- | Default set of nouns with irregular plural forms.
 defIrrp :: IrrPlural
