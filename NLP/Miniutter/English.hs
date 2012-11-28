@@ -4,7 +4,7 @@ module NLP.Miniutter.English
   ( Part(..), makeClause, makePhrase, defIrrp
   ) where
 
-import Data.Char (toUpper, isSpace)
+import Data.Char (toUpper, isAlphaNum)
 import Data.Text (Text)
 import qualified Data.Text as T
 import NLP.Minimorph.English
@@ -49,12 +49,12 @@ makePart irrp part = case part of
   String t -> T.pack t
   Text t -> t
   Cardinal n -> cardinal n
-  Ws p -> makePlural irrp (makePart irrp p)
-  NWs n p -> T.pack (show n) <+> makePlural irrp (makePart irrp p)
+  Ws p -> onLastWord (makePlural irrp) (makePart irrp p)
+  NWs 1 p -> "1" <+> makePart irrp p
+  NWs n p -> T.pack (show n) <+> onLastWord (makePlural irrp) (makePart irrp p)
   Ordinal n -> ordinal n
   NthW n p -> ordinalNotSpelled n <+> makePart irrp p
-  AW p -> let t = makePart irrp p
-          in indefiniteDet t <+> t
+  AW p -> onFirstWord addIndefinite (makePart irrp p)
   WWandW lp -> let i = "and"
                    lt = makeParts irrp lp
                in commas i lt
@@ -78,6 +78,7 @@ capitalize t = case T.uncons t of
   Just (c, rest) -> T.cons (toUpper c) rest
 
 makePlural :: IrrPlural -> Text -> Text
+makePlural _ "" = ""
 makePlural irrp t =
   case Map.lookup t irrp of
     Just u  -> u
@@ -99,6 +100,10 @@ ordinalNotSpelled k = case abs $ k `rem` 100 of
  where
   num `suf` s = T.pack (show num) <> s
 
+addIndefinite :: Text -> Text
+addIndefinite "" = ""
+addIndefinite t = indefiniteDet t <+> t
+
 defaultPossesive :: Text -> Text
 defaultPossesive "" = ""
 defaultPossesive t =
@@ -106,13 +111,17 @@ defaultPossesive t =
     's'  -> t <> "'"
     'S'  -> t <> "'"
     '\'' -> t <> "s"
-    ' '  -> t  -- TODO: more cases? or check if alpha?
     _    -> t <> "'s"
+
+onFirstWord :: (Text -> Text) -> Text -> Text
+onFirstWord f t =
+  let (starting, rest) = T.span isAlphaNum t
+  in f starting <> rest
 
 onLastWord :: (Text -> Text) -> Text -> Text
 onLastWord f t =
-  let (breakPrefix, breakRest) = T.break isSpace $ T.reverse t
-      (ending, rest) = (T.reverse breakPrefix, T.reverse breakRest)
+  let (spanPrefix, spanRest) = T.span isAlphaNum $ T.reverse t
+      (ending, rest) = (T.reverse spanPrefix, T.reverse spanRest)
   in rest <> f ending
 
 nonPremodifying :: Text -> Text
