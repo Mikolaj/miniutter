@@ -24,6 +24,7 @@ data Part =
   | NthW Int Part       -- ^ word prefixed by an ordinal (not spelled)
   | AW Part             -- ^ word with indefinite article
   | WWandW [Part]       -- ^ enumeration
+  | WWxW Part [Part]    -- ^ collection
   | W_sW Part Part      -- ^ possesive
   | Compound Part Part  -- ^ separated with space, should very rarely be needed
   | SubjectVerb Part Part     -- ^ requires conjugation
@@ -55,7 +56,10 @@ makePart irrp part = case part of
           in indefiniteDet t <+> t
   WWandW lp -> let i = "and"
                    lt = makeParts irrp lp
-               in commas i lt  -- TODO: generalize
+               in commas i lt
+  WWxW x lp -> let i = makePart irrp x
+                   lt = makeParts irrp lp
+               in commas i lt
   W_sW p_s p -> makePhrase irrp [p_s, p]  -- TODO
   Compound p1 p2 -> makePhrase irrp [p1, p2]
   SubjectVerb s v -> makePhrase irrp [s, v]  -- TODO

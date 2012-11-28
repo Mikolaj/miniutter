@@ -19,8 +19,8 @@ tests =
     , testMakePhrasePlural
     , testMakePhraseNumber
     , testMakePhraseIndefinite
-{-    , testMakePhraseEnumeration
-    , testMakePhrasePossesive
+    , testMakePhraseEnumeration
+{-    , testMakePhrasePossesive
     , testMakePhraseSubjectVerb
     , testMakePhraseNegation
     , testMakePhraseQuestion -}
@@ -130,6 +130,9 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.AW (MU.Text "dog"))]    "a dogs"
   , tp [MU.Ws (MU.WWandW [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
                                           "dog, eagle and parrots"
+  , tp [MU.Ws (MU.WWxW (MU.Text "and also")
+                       [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
+                                          "dog, eagle and also parrots"
   , tp [MU.Ws (MU.W_sW (MU.Text "uncle") (MU.Text "dog"))]
                                           "uncle's dogs"
   , tp [MU.Ws (MU.Compound (MU.Text "uncle") (MU.Text "dog"))]
@@ -186,7 +189,7 @@ testMakePhraseNumber = testGroup "number Part constructors"
   ]
 
 testMakePhraseIndefinite :: Test
-testMakePhraseIndefinite = testGroup "number Part constructors"
+testMakePhraseIndefinite = testGroup "indefinite article"
   [ tp [MU.AW (MU.Text "blue")]                 "a blue"
   , tp [MU.AW (MU.Text "blue egg")]             "a blue egg"
   , tp [MU.AW (MU.Text "ABC")]                  "an ABC"
@@ -206,6 +209,9 @@ testMakePhraseIndefinite = testGroup "number Part constructors"
   , tp [MU.AW (MU.AW (MU.Text "dog"))]          "an a dog"
   , tp [MU.AW (MU.WWandW [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
                                           "a dog, eagle and parrot"
+  , tp [MU.AW (MU.WWxW (MU.Text "or otherwise")
+                       [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
+                                          "a dog, eagle or otherwise parrot"
   , tp [MU.AW (MU.W_sW (MU.Text "uncle") (MU.Text "dog"))]
                                           "an uncle's dog"
   , tp [MU.AW (MU.Compound (MU.Text "uncle") (MU.Text "dog"))]
@@ -216,4 +222,21 @@ testMakePhraseIndefinite = testGroup "number Part constructors"
                                           "an I don't"
   , tp [MU.AW (MU.QSubjectVerb (MU.Text "I") (MU.Text "do"))]
                                           "a do I"
+  ]
+
+testMakePhraseEnumeration :: Test
+testMakePhraseEnumeration = testGroup "enumeration and collection"
+  [ tp [MU.WWandW [MU.String "dog", MU.Text "eagle", MU.Cardinal 7]]
+                                          "dog, eagle and seven"
+  , tp [MU.WWxW (MU.Text "then")
+                [MU.Ordinal 113, MU.AW (MU.String "eagle"), MU.Text "parrot"]]
+                                          "113th, an eagle then parrot"
+  , tp [MU.WWandW [ MU.String "I"
+                  , MU.WWandW [MU.String "I", MU.Ordinal 31, MU.Cardinal 17]
+                  , MU.WWandW [MU.Text "I", MU.AW (MU.Ordinal 18)]
+                  ]]
+                                          "I, I, 31st and 17 and I and an 18th"
+  , tp [MU.WWxW (MU.Text " and perhaps%")
+                [MU.Text " dog ", MU.Text "", MU.Text "%eagle."]]
+                                          " dog   and perhaps% %eagle."
   ]
