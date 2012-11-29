@@ -21,7 +21,7 @@ tests =
     , testMakePhraseIndefinite
     , testMakePhraseEnumeration
     , testMakePhrasePossesive
---    , testMakePhraseSubjectVerb
+    , testMakePhraseSubjectVerb
     ]
   ]
 
@@ -143,7 +143,7 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.NotSubjectVerb (MU.Text "I") (MU.Text "do"))]
                                            "I don'ts"
   , tp [MU.Ws (MU.QSubjectVerb (MU.Text "woman") (MU.Text "do"))]
-                                           "do women"
+                                           "does women"
   ]
 
 testMakePhraseNumber :: Test
@@ -296,4 +296,110 @@ testMakePhrasePossesive = testGroup "the possesive form"
                                                         "do mine"
   , tp [MU.Wown (MU.Text " do   I")]                    " do   mine"
   , tp [MU.Wown (MU.Text " do   I ")]                   " do   I "
+  ]
+
+testMakePhraseSubjectVerb :: Test
+testMakePhraseSubjectVerb = testGroup "subject and verb"
+  [ tp [MU.SubjectVerb (MU.Text "species") (MU.Text "look")]
+                                          "species looks"
+  , tp [MU.NotSubjectVerb (MU.Text "species") (MU.Text "look")]
+                                          "species doesn't look"
+  , tp [MU.QSubjectVerb (MU.Text "species") (MU.Text "look")]
+                                          "does species look"
+  , tp [MU.SubjectVerbPlural (MU.Text "species") (MU.Text "look")]
+                                          "species look"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "species") (MU.Text "look")]
+                                          "species don't look"
+  , tp [MU.QSubjectVerbPlural (MU.Text "species") (MU.Text "look")]
+                                          "do species look"
+  , tp [MU.SubjectVerb (MU.Text "I") (MU.Text "be")]
+                                          "I am"
+  , tp [MU.NotSubjectVerb (MU.Text "you") (MU.Text "be")]
+                                          "you aren't"
+  , tp [MU.QSubjectVerb (MU.Text "she") (MU.Text "be")]
+                                          "is she"
+  , tp [MU.SubjectVerbPlural (MU.Text "we") (MU.Text "be")]
+                                          "we are"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "I") (MU.Text "be")]
+                                          "I am not"
+  , tp [MU.QSubjectVerbPlural (MU.Text "they") (MU.Text "be")]
+                                          "are they"
+  , tp [MU.SubjectVerb (MU.Text "they") (MU.Text "be")]
+                                          "they are"
+  , tp [MU.NotSubjectVerb (MU.Text "we") (MU.Text "be")]
+                                          "we aren't"
+  , tp [MU.QSubjectVerb (MU.Text "it") (MU.Text "be")]
+                                          "is it"
+  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "be")]
+                                          "he is"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "be")]
+                                          "She isn't"
+  , tp [MU.QSubjectVerbPlural (MU.Text "You") (MU.Text "be")]
+                                          "are You"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "have")]
+                                          "Tom has"
+  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "have")]
+                                          "cat doesn't have"
+  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "have")]
+                                          "do they have"
+  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "have")]
+                                          "he has"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "have")]
+                                          "She doesn't have"
+  , tp [MU.QSubjectVerbPlural (MU.Text "Foos") (MU.Text "have")]
+                                          "do Foos have"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "do")]
+                                          "Tom does"
+  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "do")]
+                                          "cat doesn't do"
+  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "do")]
+                                          "do they do"
+  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "go")]
+                                          "he goes"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "go")]
+                                          "She doesn't go"
+  , tp [MU.QSubjectVerbPlural (MU.Text "Foos") (MU.Text "go")]
+                                          "do Foos go"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "can")]
+                                          "Tom can"
+  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "could")]
+                                          "cat couldn't"
+  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "must")]
+                                          "must they"
+  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "will")]
+                                          "he will"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "would")]
+                                          "She wouldn't"
+  , tp [MU.QSubjectVerbPlural (MU.Text "Foos") (MU.Text "shall")]
+                                          "shall Foos"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "should")]
+                                          "Tom should"
+  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "ought")]
+                                          "cat oughtn't"
+  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "may")]
+                                          "may they"
+  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "might")]
+                                          "he might"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "had")]
+                                          "She hadn't"
+  , tp [MU.QSubjectVerbPlural (MU.Text "it") (MU.Text "copy down")]
+                                          "does it copy down"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "copy down")]
+                                          "Tom copies down"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "buzz")]
+                                          "Tom buzzes"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "it it")]
+                                          "Tom its it"
+  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "you you")]
+                                          "Tom yous you"
+  , tp [MU.SubjectVerb (MU.Text "You") (MU.Text "you you")]
+                                          "You you you"
+  , tp [MU.SubjectVerb (MU.Text "She") (MU.Text "do read")]
+                                          "She does read"
+  , tp [MU.SubjectVerb (MU.Text "She") (MU.Text "do do")]
+                                          "She does do"
+  , tp [MU.QSubjectVerbPlural (MU.Text "she") (MU.Text "do")]
+                                          "does she do"
+  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "had had")]
+                                          "She hadn't had"
   ]
