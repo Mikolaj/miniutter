@@ -28,6 +28,8 @@ data Part =
   | Wown Part           -- ^ non-premodifying possesive
   | WownW Part Part     -- ^ attributive possesive
   | Compound Part Part  -- ^ separated with space, should very rarely be needed
+  | NoSp Part Part      -- ^ no space in between
+  | Part :> Text        -- ^ no space in between, a shorthand
   | SubjectVerb Part Part     -- ^ singular conjugation (pronouns also plural)
   | NotSubjectVerb Part Part  -- ^ singular negated
   | QSubjectVerb Part Part    -- ^ singular question; add question mark by hand
@@ -67,6 +69,8 @@ makePart irrp part = case part of
   Wown p -> onLastWord nonPremodifying (makePart irrp p)
   WownW p1 p2 -> onLastWord attributive (makePart irrp p1) <+> makePart irrp p2
   Compound p1 p2 -> makePhrase irrp [p1, p2]
+  NoSp p1 p2 -> makePart irrp p1 <> makePart irrp p2
+  p :> t -> makePart irrp p <> t
   SubjectVerb s v -> subjectVerb (makePart irrp s) (makePart irrp v)
   NotSubjectVerb s v -> notSubjectVerb (makePart irrp s) (makePart irrp v)
   QSubjectVerb s v -> qSubjectVerb (makePart irrp s) (makePart irrp v)
