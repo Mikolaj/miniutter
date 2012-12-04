@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
-  ( Part(..), makeClause, makePhrase, defIrrp, capitalize
+  ( Part(..), makeClause, makePhrase, defIrrp, (<>), (<+>), showT
   ) where
 
 import Data.Char (toUpper, isAlphaNum)
@@ -11,10 +11,6 @@ import NLP.Minimorph.English
 import NLP.Minimorph.Util
 import Data.Map (Map)
 import qualified Data.Map as Map
-
--- | Show a value in Msg format.
-showT :: Show a => a -> Text
-showT = T.pack . show
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
