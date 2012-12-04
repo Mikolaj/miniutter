@@ -22,6 +22,7 @@ tests =
     , testMakePhraseEnumeration
     , testMakePhrasePossesive
     , testMakePhraseSubjectVerb
+    , testAllureOfTheStars
     ]
   ]
 
@@ -412,4 +413,92 @@ testMakePhraseSubjectVerb = testGroup "subject and verb"
                                           "does she do"
   , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "had had")]
                                           "She hadn't had"
+  ]
+
+tc :: [MU.Part] -> T.Text -> Test
+tc arg expect =
+  testCase ("testClause " ++ show arg)
+  $ let obtain = MU.makeClause MU.defIrrp arg
+    in assertEqual (T.unpack expect ++ " == " ++ T.unpack obtain) expect obtain
+
+testAllureOfTheStars:: Test
+testAllureOfTheStars = testGroup "Allure of the Stars utterances"
+  [ tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "displace")
+       , MU.Text "Haskell Alvin" ]
+       "You displace Haskell Alvin."
+  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "drop")
+       , MU.NWs 3 $ MU.Text "royal blue vial" ]
+       "You drop 3 royal blue vials."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "displace")
+       , MU.Text "you" ]
+       "Haskell Alvin displaces you."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "drop")
+       , MU.NWs 1 $ MU.Text "royal blue vial" ]
+       "Haskell Alvin drops a royal blue vial."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "gulp down")
+       , MU.AW $ MU.Text "royal blue vial" ]
+       "Haskell Alvin gulps down a royal blue vial."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "feel better") ]
+       "Haskell Alvin feels better."
+  , tc [ MU.SubjectVerb (MU.Text "the royal blue vial")
+                        (MU.Text "turn out to be")
+       , MU.NWs 1 $ MU.Text "vial of healing (+5)" ]
+       "The royal blue vial turns out to be a vial of healing (+5)."
+  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "gulp down")
+       , MU.AW $ MU.Text "magenta vial" ]
+       "You gulp down a magenta vial."
+  , tc [ MU.SubjectVerb (MU.Text "the magenta vial")
+                        (MU.Text "turn out to be")
+       , MU.NWs 1 $ MU.Text "vial of rose water" ]
+       "The magenta vial turns out to be a vial of rose water."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
+                        (MU.Text "trie to hit")
+         MU.:> ", but you block" ]
+       "Deranged household robot tries to hit, but you block."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "hit")
+       , MU.Text "you" ]
+       "Deranged household robot hits you."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
+                        (MU.Text "pick up")
+       , MU.NWs 2 $ MU.Text "sharpened pipe", MU.Text "(3d1) (+1)" ]
+       "Deranged household robot picks up 2 sharpened pipes (3d1) (+1)."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "hit")
+       , MU.Text"you with", MU.NWs 1 $ MU.Text "sharpened pipe (3d1) (+1)" ]
+       "Deranged household robot hits you with a sharpened pipe (3d1) (+1)."
+  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "kick")
+       , MU.Text "deranged household robot" ]
+       "You kick deranged household robot."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "die") ]
+       "Deranged household robot dies."
+  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "find")
+       , MU.Text "a way downstairs" ]
+       "You find a way downstairs."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "squash")
+       , MU.Text "you in a staircase accident" ]
+       "Haskell Alvin squashes you in a staircase accident."
+  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "die") ]
+       "You die."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "find")
+       , MU.Text "a way downstairs" ]
+       "Haskell Alvin finds a way downstairs."
+  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "hit")
+       , MU.Text "deranged household robot" ]
+       "Haskell Alvin hits deranged household robot."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "hit")
+       , MU.Text "Haskell Alvin" ]
+       "Deranged household robot hits Haskell Alvin."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
+                        (MU.Text "try to hit")
+         MU.:> ", but Haskell Alvin blocks" ]
+       "Deranged household robot tries to hit, but Haskell Alvin blocks."
+  , tc [ MU.SubjectVerb (MU.Text "deformed monkey") (MU.Text "hit")
+       , MU.Text "deranged household robot" ]
+       "Deformed monkey hits deranged household robot."
+  , tc [ MU.SubjectVerb (MU.NWs 1 $ MU.Text "flying billiard ball (1d1)")
+                        (MU.Text "hit")
+       , MU.Text "deranged household robot" ]
+       "A flying billiard ball (1d1) hits deranged household robot."
+  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
+                        (MU.Text "hiss in pain") ]
+       "Deranged household robot hisses in pain."
   ]
