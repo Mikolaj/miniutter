@@ -12,6 +12,10 @@ import NLP.Minimorph.Util
 import Data.Map (Map)
 import qualified Data.Map as Map
 
+-- | Show a value in Msg format.
+showT :: Show a => a -> Text
+showT = T.pack . show
+
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
 data Part =
@@ -56,8 +60,8 @@ makePart irrp part = case part of
   Text t -> t
   Cardinal n -> cardinal n
   Ws p -> onLastWord (makePlural irrp) (makePart irrp p)
-  NWs 1 p -> "1" <+> makePart irrp p
-  NWs n p -> T.pack (show n) <+> onLastWord (makePlural irrp) (makePart irrp p)
+  NWs 1 p -> makePart irrp (AW p)
+  NWs n p -> showT n <+> onLastWord (makePlural irrp) (makePart irrp p)
   Ordinal n -> ordinal n
   NthW n p -> ordinalNotSpelled n <+> makePart irrp p
   AW p -> onFirstWord addIndefinite (makePart irrp p)
@@ -112,7 +116,7 @@ ordinalNotSpelled k = case abs $ k `rem` 100 of
     | n `rem` 10 == 3 -> k `suf` "rd"
     | otherwise       -> k `suf` "th"
  where
-  num `suf` s = T.pack (show num) <> s
+  num `suf` s = showT num <> s
 
 addIndefinite :: Text -> Text
 addIndefinite t = indefiniteDet t <+> t
@@ -334,6 +338,7 @@ attributive "they" = "their"
 attributive "They" = "Their"
 attributive t = defaultPossesive t
 
+-- TODO: use a suffix tree, to catch ableman, seaman, etc.?
 -- | Default set of nouns with irregular plural forms.
 defIrrp :: IrrPlural
 defIrrp = Map.fromList
