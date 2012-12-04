@@ -30,6 +30,7 @@ data Part =
   | Compound Part Part  -- ^ separated with space, should very rarely be needed
   | NoSp Part Part      -- ^ no space in between
   | Part :> Text        -- ^ no space in between, a shorthand
+  | Capitalize Part     -- ^ make the first letter into a capital letter
   | SubjectVerb Part Part     -- ^ singular conjugation (pronouns also plural)
   | NotSubjectVerb Part Part  -- ^ singular negated
   | QSubjectVerb Part Part    -- ^ singular question; add question mark by hand
@@ -70,6 +71,7 @@ makePart irrp part = case part of
   WownW p1 p2 -> onLastWord attributive (makePart irrp p1) <+> makePart irrp p2
   Compound p1 p2 -> makePhrase irrp [p1, p2]
   NoSp p1 p2 -> makePart irrp p1 <> makePart irrp p2
+  Capitalize p -> capitalize $ makePart irrp p
   p :> t -> makePart irrp p <> t
   SubjectVerb s v -> subjectVerb (makePart irrp s) (makePart irrp v)
   NotSubjectVerb s v -> notSubjectVerb (makePart irrp s) (makePart irrp v)

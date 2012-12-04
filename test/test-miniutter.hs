@@ -64,6 +64,14 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , tp [MU.String " blue ", MU.String " dog "]            " blue   dog "
   , tp [MU.Text " blue ", MU.Text " dog "]                " blue   dog "
   , tp [MU.Compound (MU.Text " blue ") (MU.Text " dog ")] " blue   dog "
+  , testCase "testPhrase makeClause and Capitalize" $
+      assertEqual "makeClause == Capitalize makePhrase :> '.'"
+        (MU.makePhrase MU.defIrrp
+           [MU.Capitalize (MU.SubjectVerb (MU.Text "goblin")
+                                          (MU.Text "hit")) MU.:> "."])
+        (MU.makeClause MU.defIrrp
+           [MU.SubjectVerb (MU.Text "goblin")
+                           (MU.Text "hit")])
   ]
 
 testMakePhrasePlural :: Test
