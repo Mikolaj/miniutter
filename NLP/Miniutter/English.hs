@@ -98,22 +98,6 @@ makePlural irrp t =
     Just u  -> u
     Nothing -> defaultNounPlural t
 
--- TODO: move to minimorph; fix ordinal
--- | > ordinal 1 == "1st"
---   > ordinal 2 == "2nd"
---   > ordinal 3 == "3rd"
---   > ordinal 11 == "11th"
---   > ordinal 42 == "42nd"
-ordinalNotSpelled :: Int -> Text
-ordinalNotSpelled k = case abs $ k `rem` 100 of
-  n | n > 3 && n < 21 -> k `suf` "th"
-    | n `rem` 10 == 1 -> k `suf` "st"
-    | n `rem` 10 == 2 -> k `suf` "nd"
-    | n `rem` 10 == 3 -> k `suf` "rd"
-    | otherwise       -> k `suf` "th"
- where
-  num `suf` s = showT num <> s
-
 addIndefinite :: Text -> Text
 addIndefinite t = indefiniteDet t <+> t
 
