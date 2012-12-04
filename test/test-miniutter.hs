@@ -78,7 +78,7 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
 testMakePhrasePlural :: Test
 testMakePhrasePlural = testGroup "plural form Part constructors"
   [ tp [MU.Ws (MU.Text "dog")]        "dogs"
-  , tp [MU.Ws (MU.Text "dogs")]       "dogs"
+  , tp [MU.Ws (MU.Text "dogs")]       "dogses"
   , tp [MU.Ws (MU.Text "blue dog")]   "blue dogs"
   , tp [MU.Ws (MU.Text "blue dog  ")] "blue dog  "
   , tp [MU.Ws (MU.Text "blue dog.")]  "blue dog."
@@ -94,7 +94,7 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.Text "buy")]        "buys"
   , tp [MU.Ws (MU.Text "try")]        "tries"
   , tp [MU.Ws (MU.Text "canto")]      "cantos"
-  , tp [MU.Ws (MU.Text "homo")]      "homos"
+  , tp [MU.Ws (MU.Text "homo")]       "homos"
   , tp [MU.Ws (MU.Text "photo")]      "photos"
   , tp [MU.Ws (MU.Text "nice zero")]  "nice zeros"
   , tp [MU.Ws (MU.Text "piano")]      "pianos"
@@ -152,9 +152,9 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.SubjectVerb (MU.Text "I") (MU.Text "do"))]
                                            "I does"
   , tp [MU.Ws (MU.NotSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                           "I don'ts"
+                                           "I don't does"
   , tp [MU.Ws (MU.QSubjectVerb (MU.Text "woman") (MU.Text "do"))]
-                                           "does women"
+                                           "does woman does"
   ]
 
 testMakePhraseNumber :: Test
@@ -197,7 +197,7 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.NthW 4 (MU.Ordinal 2)]       "4th second"
   , tp [MU.NthW 4 (MU.NthW 7 (MU.Text "dog"))]    "4th 7th dog"
   , tp [MU.NthW 4 (MU.NWs 7 (MU.Text "dog"))]     "4th 7 dogs"
-  , tp [MU.NWs 4 (MU.NWs 7 (MU.Text "dog"))]      "4 7 dogs"
+  , tp [MU.NWs 4 (MU.NWs 7 (MU.Text "dog"))]      "4 7 dogses"
   , tp [MU.NWs 4 (MU.NthW 7 (MU.Text "elf"))]     "4 7th elves"
   ]
 
@@ -234,9 +234,9 @@ testMakePhraseIndefinite = testGroup "indefinite article"
   , tp [MU.AW (MU.SubjectVerb (MU.Text "I") (MU.Text "do"))]
                                           "an I do"
   , tp [MU.AW (MU.NotSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                          "an I don't"
+                                          "an I don't do"
   , tp [MU.AW (MU.QSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                          "a do I"
+                                          "a do I do"
   ]
 
 testMakePhraseEnumeration :: Test
@@ -294,7 +294,7 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.WownW (MU.Text "They") (MU.Text "dog")]      "Their dog"
   , tp [MU.Wown (MU.NWs 6 (MU.Text ""))]                "6's"
   , tp [MU.Wown (MU.NthW 1 (MU.Text ""))]               "1st's"
-  , tp [MU.Wown (MU.Ws (MU.NWs 6 (MU.Text "")))]        "6es'"
+  , tp [MU.Wown (MU.Ws (MU.NWs 6 (MU.Text "")))]        "6s'"
   , tp [MU.Wown (MU.WWandW [MU.Text "I", MU.Text "you"])]
                                                         "I and yours"
   , tp [MU.Wown (MU.WWandW [MU.Text "you", MU.Text "I"])]
@@ -302,9 +302,10 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.WownW (MU.WWandW [MU.Text "you", MU.Text "I"]) (MU.Text "dog")]
                                                         "you and my dog"
   , tp [MU.Wown (MU.Wown (MU.Text "it"))]               "its'"
-  , tp [MU.Wown (MU.Wown (MU.Wown (MU.Text "it")))]     "its's"
-  , tp [MU.Wown (MU.QSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                                        "do mine"
+  , tp [MU.Wown $ MU.Wown $ MU.Wown $ MU.Wown $ MU.Text "it"]
+                                                        "its's'"
+  , tp [MU.Wown (MU.QSubjectVerb (MU.Text "I") (MU.Text "be"))]
+                                                        "am mine"
   , tp [MU.Wown (MU.Text " do   I")]                    " do   mine"
   , tp [MU.Wown (MU.Text " do   I ")]                   " do   I "
   ]

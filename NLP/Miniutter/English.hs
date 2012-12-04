@@ -251,16 +251,19 @@ qSubjectVerbPlural s v =
   let (v1, v2) = disregardCase (\s1 -> onFirstWordPair $ qVerbPlural s1) s v
   in v1 <+> s <+> v2
 
+isWordLetter :: Char -> Bool
+isWordLetter c = isAlphaNum c || c == '\'' || c == '-'
+
 onFirstWord :: (Text -> Text) -> Text -> Text
 onFirstWord f t =
-  let (starting, rest) = T.span isAlphaNum t
+  let (starting, rest) = T.span isWordLetter t
   in if T.null starting
      then rest
      else f starting <> rest
 
 onLastWord :: (Text -> Text) -> Text -> Text
 onLastWord f t =
-  let (spanPrefix, spanRest) = T.span isAlphaNum $ T.reverse t
+  let (spanPrefix, spanRest) = T.span isWordLetter $ T.reverse t
       (ending, rest) = (T.reverse spanPrefix, T.reverse spanRest)
   in if T.null ending
      then rest
@@ -268,7 +271,7 @@ onLastWord f t =
 
 onFirstWordPair :: (Text -> (Text, Text)) -> Text -> (Text, Text)
 onFirstWordPair f t =
-  let (starting, rest) = T.span isAlphaNum t
+  let (starting, rest) = T.span isWordLetter t
   in if T.null starting
      then (rest, "")
      else let (t1, t2) = f starting
@@ -315,7 +318,7 @@ attributive t = defaultPossesive t
 defIrrp :: IrrPlural
 defIrrp = Map.fromList
   [ ("canto",       "cantos")
-  , ("homo ",       "homos")
+  , ("homo",       "homos")
   , ("photo",       "photos")
   , ("zero",        "zeros")
   , ("piano",       "pianos")
@@ -323,14 +326,12 @@ defIrrp = Map.fromList
   , ("pro",         "pros")
   , ("quarto",      "quartos")
   , ("kimono",      "kimonos")
-  , ("calf",        "calves")
-  , ("leaf",        "leaves")
   , ("knife",       "knives")
   , ("life",        "lives")
   , ("dwarf",       "dwarfs")  -- not for ME dwarves, though
-  , ("hoof",        "hooves")
-  , ("elf",         "elves")
-  , ("staff",       "staves")  -- depends on the meaning :<
+  , ("proof",       "proofs")
+  , ("roof",        "roofs")
+  , ("turf",        "turfs")
   , ("child",       "children")
   , ("foot",        "feet")
   , ("goose",       "geese")
