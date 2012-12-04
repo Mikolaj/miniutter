@@ -101,14 +101,6 @@ makePlural irrp t =
 addIndefinite :: Text -> Text
 addIndefinite t = indefiniteDet t <+> t
 
-defaultPossesive :: Text -> Text
-defaultPossesive t =
-  case T.last t of
-    's'  -> t <> "'"
-    'S'  -> t <> "'"
-    '\'' -> t <> "s"
-    _    -> t <> "'s"
-
 disregardCase :: (Text -> Text -> a) -> Text -> Text -> a
 disregardCase f s v =
   if s `elem` ["You", "He", "She", "It", "We", "They"]
