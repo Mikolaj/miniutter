@@ -29,7 +29,7 @@ tests =
 tp :: [MU.Part] -> T.Text -> Test
 tp arg expect =
   testCase ("testPhrase " ++ show arg)
-  $ let obtain = MU.makePhrase MU.defIrrp arg
+  $ let obtain = MU.makePhrase MU.defIrregular arg
     in assertEqual (T.unpack expect ++ " == " ++ T.unpack obtain) expect obtain
 
 testMakePhraseVerbatim :: Test
@@ -67,10 +67,10 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , tp [MU.Compound (MU.Text " blue ") (MU.Text " dog ")] " blue   dog "
   , testCase "testPhrase makeClause and Capitalize" $
       assertEqual "makeClause == Capitalize makePhrase :> '.'"
-        (MU.makePhrase MU.defIrrp
+        (MU.makePhrase MU.defIrregular
            [MU.Capitalize (MU.SubjectVerb (MU.Text "goblin")
                                           (MU.Text "hit")) MU.:> "."])
-        (MU.makeClause MU.defIrrp
+        (MU.makeClause MU.defIrregular
            [MU.SubjectVerb (MU.Text "goblin")
                            (MU.Text "hit")])
   ]
@@ -419,7 +419,7 @@ testMakePhraseSubjectVerb = testGroup "subject and verb"
 tc :: [MU.Part] -> T.Text -> Test
 tc arg expect =
   testCase ("testClause " ++ show arg)
-  $ let obtain = MU.makeClause MU.defIrrp arg
+  $ let obtain = MU.makeClause MU.defIrregular arg
     in assertEqual (T.unpack expect ++ " == " ++ T.unpack obtain) expect obtain
 
 testAllureOfTheStars:: Test

@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
-  ( Part(..), makeClause, makePhrase, defIrrp, (<>), (<+>), showT
+  ( Part(..), makeClause, makePhrase, defIrregular, (<>), (<+>), showT
   ) where
 
 import Data.Char (toUpper, isAlphaNum)
@@ -40,61 +40,91 @@ data Part =
   deriving Show
 
 -- | Nouns with irregular plural forms.
-type IrrPlural = Map Text Text
+type Irregular = Map Text Text
+
+-- | Default set of words with irregular forms.
+defIrregular :: Irregular
+defIrregular = defIrrp
 
 -- | Realise a complete clause, capitalized, ending with a dot.
-makeClause :: IrrPlural -> [Part] -> Text
-makeClause irrp l = capitalize $ makePhrase irrp l `T.snoc` '.'
+makeClause :: Irregular -> [Part] -> Text
+makeClause irr l = capitalize $ makePhrase irr l `T.snoc` '.'
 
--- | Realise a fraction of a clause.
-makePhrase :: IrrPlural -> [Part] -> Text
-makePhrase irrp = T.intercalate (T.singleton ' ') . makeParts irrp
+-- | Realise a fraction of a clause. The spacing between parts
+-- resembles the semantics of (<+>), that is, it ignores empty words.
+makePhrase :: Irregular -> [Part] -> Text
+makePhrase irr = T.intercalate (T.singleton ' ') . makeParts irr
 
-makePart :: IrrPlural -> Part -> Text
-makePart irrp part = case part of
+makeParts :: Irregular -> [Part] -> [Text]
+makeParts irr = filter (not . T.null) . map (makePart irr)
+
+-- The semantics of the operations is compositional.
+makePart :: Irregular -> Part -> Text
+makePart irr part = case part of
   String t -> T.pack t
   Text t -> t
   Cardinal n -> cardinal n
-  Ws p -> onLastWord (makePlural irrp) (makePart irrp p)
-  NWs 1 p -> makePart irrp (AW p)
-  NWs n p -> showT n <+> onLastWord (makePlural irrp) (makePart irrp p)
+  Ws p -> onLastWord (makePlural irr) (mkPart p)
+  NWs 1 p -> mkPart (AW p)
+  NWs n p -> showT n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
-  NthW n p -> ordinalNotSpelled n <+> makePart irrp p
-  AW p -> onFirstWord addIndefinite (makePart irrp p)
+  NthW n p -> ordinalNotSpelled n <+> mkPart p
+  AW p -> onFirstWord addIndefinite (mkPart p)
   WWandW lp -> let i = "and"
-                   lt = makeParts irrp lp
+                   lt = makeParts irr lp
                in commas i lt
-  WWxW x lp -> let i = makePart irrp x
-                   lt = makeParts irrp lp
+  WWxW x lp -> let i = mkPart x
+                   lt = makeParts irr lp
                in commas i lt
-  Wown p -> onLastWord nonPremodifying (makePart irrp p)
-  WownW p1 p2 -> onLastWord attributive (makePart irrp p1) <+> makePart irrp p2
-  Compound p1 p2 -> makePhrase irrp [p1, p2]
-  NoSp p1 p2 -> makePart irrp p1 <> makePart irrp p2
-  Capitalize p -> capitalize $ makePart irrp p
-  p :> t -> makePart irrp p <> t
-  SubjectVerb s v -> subjectVerb (makePart irrp s) (makePart irrp v)
-  NotSubjectVerb s v -> notSubjectVerb (makePart irrp s) (makePart irrp v)
-  QSubjectVerb s v -> qSubjectVerb (makePart irrp s) (makePart irrp v)
-  SubjectVerbPlural s v ->
-    subjectVerbPlural (makePart irrp s) (makePart irrp v)
-  NotSubjectVerbPlural s v ->
-    notSubjectVerbPlural (makePart irrp s) (makePart irrp v)
-  QSubjectVerbPlural s v ->
-    qSubjectVerbPlural (makePart irrp s) (makePart irrp v)
+  Wown p -> onLastWord nonPremodifying (mkPart p)
+  WownW p1 p2 -> onLastWord attributive (mkPart p1) <+> mkPart p2
+  Compound p1 p2 -> makePhrase irr [p1, p2]
+  NoSp p1 p2 -> mkPart p1 <> mkPart p2
+  Capitalize p -> capitalize $ mkPart p
+  p :> t -> mkPart p <> t
+  SubjectVerb          s v -> subjectVerb          (mkPart s) (mkPart v)
+  NotSubjectVerb       s v -> notSubjectVerb       (mkPart s) (mkPart v)
+  QSubjectVerb         s v -> qSubjectVerb         (mkPart s) (mkPart v)
+  SubjectVerbPlural    s v -> subjectVerbPlural    (mkPart s) (mkPart v)
+  NotSubjectVerbPlural s v -> notSubjectVerbPlural (mkPart s) (mkPart v)
+  QSubjectVerbPlural   s v -> qSubjectVerbPlural   (mkPart s) (mkPart v)
+ where
+  mkPart = makePart irr
 
-makeParts :: IrrPlural -> [Part] -> [Text]
-makeParts irrp = filter (not . T.null) . map (makePart irrp)
+onFirstWord :: (Text -> Text) -> Text -> Text
+onFirstWord f t =
+  let (starting, rest) = T.span isWordLetter t
+  in if T.null starting
+     then rest
+     else f starting <> rest
 
--- | Capitalize text.
+onLastWord :: (Text -> Text) -> Text -> Text
+onLastWord f t =
+  let (spanPrefix, spanRest) = T.span isWordLetter $ T.reverse t
+      (ending, rest) = (T.reverse spanPrefix, T.reverse spanRest)
+  in if T.null ending
+     then rest
+     else rest <> f ending
+
+onFirstWordPair :: (Text -> (Text, Text)) -> Text -> (Text, Text)
+onFirstWordPair f t =
+  let (starting, rest) = T.span isWordLetter t
+  in if T.null starting
+     then (rest, "")
+     else let (t1, t2) = f starting
+          in (t1, t2 <> rest)
+
+isWordLetter :: Char -> Bool
+isWordLetter c = isAlphaNum c || c == '\'' || c == '-'
+
 capitalize :: Text -> Text
 capitalize t = case T.uncons t of
   Nothing        -> T.empty
   Just (c, rest) -> T.cons (toUpper c) rest
 
-makePlural :: IrrPlural -> Text -> Text
-makePlural irrp t =
-  case Map.lookup t irrp of
+makePlural :: Irregular -> Text -> Text
+makePlural irr t =
+  case Map.lookup t irr of
     Just u  -> u
     Nothing -> defaultNounPlural t
 
@@ -251,32 +281,6 @@ qSubjectVerbPlural s v =
   let (v1, v2) = disregardCase (\s1 -> onFirstWordPair $ qVerbPlural s1) s v
   in v1 <+> s <+> v2
 
-isWordLetter :: Char -> Bool
-isWordLetter c = isAlphaNum c || c == '\'' || c == '-'
-
-onFirstWord :: (Text -> Text) -> Text -> Text
-onFirstWord f t =
-  let (starting, rest) = T.span isWordLetter t
-  in if T.null starting
-     then rest
-     else f starting <> rest
-
-onLastWord :: (Text -> Text) -> Text -> Text
-onLastWord f t =
-  let (spanPrefix, spanRest) = T.span isWordLetter $ T.reverse t
-      (ending, rest) = (T.reverse spanPrefix, T.reverse spanRest)
-  in if T.null ending
-     then rest
-     else rest <> f ending
-
-onFirstWordPair :: (Text -> (Text, Text)) -> Text -> (Text, Text)
-onFirstWordPair f t =
-  let (starting, rest) = T.span isWordLetter t
-  in if T.null starting
-     then (rest, "")
-     else let (t1, t2) = f starting
-          in (t1, t2 <> rest)
-
 nonPremodifying :: Text -> Text
 nonPremodifying "who"  = "whose"
 nonPremodifying "Who"  = "Whose"
@@ -315,7 +319,7 @@ attributive t = defaultPossesive t
 
 -- TODO: use a suffix tree, to catch ableman, seaman, etc.?
 -- | Default set of nouns with irregular plural forms.
-defIrrp :: IrrPlural
+defIrrp :: Map Text Text
 defIrrp = Map.fromList
   [ ("canto",       "cantos")
   , ("homo",       "homos")

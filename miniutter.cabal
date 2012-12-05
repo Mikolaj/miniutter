@@ -1,5 +1,5 @@
 name:          miniutter
-version:       0.1.0
+version:       0.2.0
 synopsis:      Simple English clause creation from arbitrary words.
 description:   This library helps in generating simple present tense
                English sentences from short, parametrized descriptions.
