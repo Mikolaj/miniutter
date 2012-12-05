@@ -39,12 +39,13 @@ data Part =
   | QSubjectVerbPlural Part Part    -- ^ plural question
   deriving Show
 
--- | Nouns with irregular plural forms.
-type Irregular = Map Text Text
+-- | Nouns with irregular plural form and nouns with irregular indefinite
+-- article.
+type Irregular = (Map Text Text, Map Text Text)
 
 -- | Default set of words with irregular forms.
 defIrregular :: Irregular
-defIrregular = defIrrp
+defIrregular = (defIrrPlural, defIrrIndefinite)
 
 -- | Realise a complete clause, capitalized, ending with a dot.
 makeClause :: Irregular -> [Part] -> Text
@@ -69,7 +70,7 @@ makePart irr part = case part of
   NWs n p -> showT n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
   NthW n p -> ordinalNotSpelled n <+> mkPart p
-  AW p -> onFirstWord addIndefinite (mkPart p)
+  AW p -> onFirstWord (addIndefinite irr) (mkPart p)
   WWandW lp -> let i = "and"
                    lt = makeParts irr lp
                in commas i lt
@@ -123,13 +124,16 @@ capitalize t = case T.uncons t of
   Just (c, rest) -> T.cons (toUpper c) rest
 
 makePlural :: Irregular -> Text -> Text
-makePlural irr t =
-  case Map.lookup t irr of
+makePlural (irrPlural, _) t =
+  case Map.lookup t irrPlural of
     Just u  -> u
     Nothing -> defaultNounPlural t
 
-addIndefinite :: Text -> Text
-addIndefinite t = indefiniteDet t <+> t
+addIndefinite :: Irregular -> Text -> Text
+addIndefinite (_, irrIndefinite) t =
+  case Map.lookup t irrIndefinite of
+    Just u  -> u <+> t
+    Nothing -> indefiniteDet t <+> t
 
 disregardCase :: (Text -> Text -> a) -> Text -> Text -> a
 disregardCase f s v =
@@ -318,11 +322,11 @@ attributive "They" = "Their"
 attributive t = defaultPossesive t
 
 -- TODO: use a suffix tree, to catch ableman, seaman, etc.?
--- | Default set of nouns with irregular plural forms.
-defIrrp :: Map Text Text
-defIrrp = Map.fromList
+-- | Default set of nouns with irregular plural form.
+defIrrPlural :: Map Text Text
+defIrrPlural = Map.fromList
   [ ("canto",       "cantos")
-  , ("homo",       "homos")
+  , ("homo",        "homos")
   , ("photo",       "photos")
   , ("zero",        "zeros")
   , ("piano",       "pianos")
@@ -358,4 +362,21 @@ defIrrp = Map.fromList
   , ("spacecraft",  "spacecraft")
   , ("hovercraft",  "hovercraft")
   , ("information", "information")
+  ]
+-- | Default set of nouns with irregular indefinite article.
+defIrrIndefinite :: Map Text Text
+defIrrIndefinite = Map.fromList
+  [ ("user",         "a")
+  , ("university",   "a")
+  , ("unicorn",      "a")
+  , ("unicycle",     "a")
+  , ("usual",        "a")
+  , ("unique",       "a")
+  , ("uniform",      "a")
+  , ("SCUBA",        "a")
+  , ("HEPA",         "a")
+  , ("hour",         "an")
+  , ("heir",         "an")
+  , ("honour",       "an")
+  , ("honor",        "an")
   ]

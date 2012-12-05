@@ -203,11 +203,13 @@ testMakePhraseNumber = testGroup "number Part constructors"
 
 testMakePhraseIndefinite :: Test
 testMakePhraseIndefinite = testGroup "indefinite article"
-  [ tp [MU.AW (MU.Text "blue")]                 "a blue"
-  , tp [MU.AW (MU.Text "blue egg")]             "a blue egg"
+  [ tp [MU.AW (MU.Text "user")]                 "a user"
+  , tp [MU.AW (MU.Text "usual egg")]            "a usual egg"
   , tp [MU.AW (MU.Text "ABC")]                  "an ABC"
   , tp [MU.AW (MU.Text " ABC")]                 " ABC"
   , tp [MU.AW (MU.Text "ABC ")]                 "an ABC "
+  , tp [MU.AW (MU.Text "SCUBA")]                "a SCUBA"
+  , tp [MU.AW (MU.Text "SSI")]                  "an SSI"
   , tp [MU.AW (MU.String "yell")]               "a yell"
   , tp [MU.AW (MU.Cardinal 3)]                  "a three"
   , tp [MU.AW (MU.Cardinal 8)]                  "an eight"
@@ -223,8 +225,8 @@ testMakePhraseIndefinite = testGroup "indefinite article"
   , tp [MU.AW (MU.WWandW [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
                                           "a dog, eagle and parrot"
   , tp [MU.AW (MU.WWxW (MU.Text "or otherwise")
-                       [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
-                                          "a dog, eagle or otherwise parrot"
+                       [MU.Text "hour", MU.Text "eagle", MU.Text "parrot"])]
+                                          "an hour, eagle or otherwise parrot"
   , tp [MU.AW (MU.Wown (MU.Text "uncle"))]
                                           "an uncle's"
   , tp [MU.AW (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
