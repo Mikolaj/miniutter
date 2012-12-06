@@ -42,380 +42,306 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , tp [MU.String "blue", MU.String ""]    "blue"
   , tp [MU.String "", MU.String "dog"]     "dog"
   , tp [MU.String "", MU.String ""]        ""
-  , tp [MU.String "blue", MU.Text "dog"]   "blue dog"
-  , tp [MU.String "blue", MU.Text ""]      "blue"
-  , tp [MU.String "", MU.Text "dog"]       "dog"
-  , tp [MU.String "", MU.Text ""]          ""
-  , tp [MU.Text "blue", MU.String "dog"]   "blue dog"
-  , tp [MU.Text "blue", MU.String ""]      "blue"
-  , tp [MU.Text "", MU.String "dog"]       "dog"
-  , tp [MU.Text "", MU.String ""]          ""
-  , tp [MU.Text "blue", MU.Text "dog"]     "blue dog"
-  , tp [MU.Text "blue", MU.Text ""]        "blue"
-  , tp [MU.Text "", MU.Text "dog"]         "dog"
-  , tp [MU.Text "", MU.Text ""]            ""
-  , tp [MU.Phrase [MU.Text "blue", MU.Text "dog"]]      "blue dog"
-  , tp [MU.Phrase [MU.Text "blue", MU.Text ""]]         "blue"
-  , tp [MU.Phrase [MU.Text "", MU.Text "dog"]]          "dog"
-  , tp [MU.Phrase [MU.Text "", MU.Text ""]]             ""
-  , tp [MU.Ordinal 0 MU.:> ", but", MU.Ordinal 1]       "0th, but first"
-  , tp [MU.Cardinal 20 MU.:> MU.Cardinal 0]             "200"
-  , tp [MU.String " "]                                  " "
-  , tp [MU.Text   " "]                                  " "
-  , tp [MU.String " blue ", MU.String " dog "]          " blue   dog "
-  , tp [MU.Text " blue ", MU.Text " dog "]              " blue   dog "
-  , tp [MU.Phrase [MU.Text " blue ", MU.Text " dog "]]  " blue   dog "
+  , tp [MU.String "blue", "dog"]           "blue dog"
+  , tp [MU.String "blue", ""]              "blue"
+  , tp [MU.String "", "dog"]               "dog"
+  , tp [MU.String "", ""]                  ""
+  , tp ["blue", MU.String "dog"]           "blue dog"
+  , tp ["blue", MU.String ""]              "blue"
+  , tp ["", MU.String "dog"]               "dog"
+  , tp ["", MU.String ""]                  ""
+  , tp ["blue", "dog"]                     "blue dog"
+  , tp ["blue", ""]                        "blue"
+  , tp ["", "dog"]                         "dog"
+  , tp ["", ""]                            ""
+  , tp [MU.Phrase ["blue", "dog"]]         "blue dog"
+  , tp [MU.Phrase ["blue", ""]]            "blue"
+  , tp [MU.Phrase ["", "dog"]]             "dog"
+  , tp [MU.Phrase ["", ""]]                ""
+  , tp [MU.Ordinal 0 MU.:> ", but", MU.Ordinal 1] "0th, but first"
+  , tp [MU.Cardinal 20 MU.:> MU.Cardinal 0]       "200"
+  , tp [MU.String " "]                            " "
+  , tp [  " "]                                    " "
+  , tp [MU.String " blue ", MU.String " dog "]    " blue   dog "
+  , tp [" blue ", " dog "]                        " blue   dog "
+  , tp [MU.Phrase [" blue ", " dog "]]            " blue   dog "
   , testCase "testPhrase makeClause and Capitalize" $
       assertEqual "makeClause == Capitalize makePhrase :> '.'"
         (MU.makePhrase MU.defIrregular
-           [MU.Capitalize (MU.SubjectVerb (MU.Text "goblin")
-                                          (MU.Text "hit")) MU.:> "."])
+           [MU.Capitalize (MU.SubjectVerb "goblin" "hit") MU.:> "."])
         (MU.makeClause MU.defIrregular
-           [MU.SubjectVerb (MU.Text "goblin")
-                           (MU.Text "hit")])
+           [MU.SubjectVerb "goblin" "hit"])
   ]
 
 testMakePhrasePlural :: Test
 testMakePhrasePlural = testGroup "plural form Part constructors"
-  [ tp [MU.Ws (MU.Text "dog")]        "dogs"
-  , tp [MU.Ws (MU.Text "dogs")]       "dogses"
-  , tp [MU.Ws (MU.Text "blue dog")]   "blue dogs"
-  , tp [MU.Ws (MU.Text "blue dog  ")] "blue dog  "
-  , tp [MU.Ws (MU.Text "blue dog.")]  "blue dog."
-  , tp [MU.Ws (MU.Text "blue dog%")]  "blue dog%"
-  , tp [MU.Ws (MU.Text "bitch")]      "bitches"
-  , tp [MU.Ws (MU.Text "the fish")]   "the fishes"
-  , tp [MU.Ws (MU.Text "miss")]       "misses"
-  , tp [MU.Ws (MU.Text "buzz")]       "buzzes"
-  , tp [MU.Ws (MU.Text "box")]        "boxes"
-  , tp [MU.Ws (MU.Text "hajj")]       "hajjes"
-  , tp [MU.Ws (MU.Text "goto")]       "gotoes"
-  , tp [MU.Ws (MU.Text "igloo")]      "igloos"
-  , tp [MU.Ws (MU.Text "buy")]        "buys"
-  , tp [MU.Ws (MU.Text "try")]        "tries"
-  , tp [MU.Ws (MU.Text "canto")]      "cantos"
-  , tp [MU.Ws (MU.Text "homo")]       "homos"
-  , tp [MU.Ws (MU.Text "photo")]      "photos"
-  , tp [MU.Ws (MU.Text "nice zero")]  "nice zeros"
-  , tp [MU.Ws (MU.Text "piano")]      "pianos"
-  , tp [MU.Ws (MU.Text "portico")]    "porticos"
-  , tp [MU.Ws (MU.Text "pro")]        "pros"
-  , tp [MU.Ws (MU.Text "quarto")]     "quartos"
-  , tp [MU.Ws (MU.Text "kimono")]     "kimonos"
-  , tp [MU.Ws (MU.Text "calf")]       "calves"
-  , tp [MU.Ws (MU.Text "leaf")]       "leaves"
-  , tp [MU.Ws (MU.Text "knife")]      "knives"
-  , tp [MU.Ws (MU.Text "life")]       "lives"
-  , tp [MU.Ws (MU.Text "dwarf")]      "dwarfs"
-  , tp [MU.Ws (MU.Text "hoof")]       "hooves"
-  , tp [MU.Ws (MU.Text "elf")]        "elves"
---, tp [MU.Ws (MU.Text "staff")]      "staves"  -- depends on the meaning :(
-  , tp [MU.Ws (MU.Text "child")]      "children"
-  , tp [MU.Ws (MU.Text "foot")]       "feet"
-  , tp [MU.Ws (MU.Text "goose")]      "geese"
-  , tp [MU.Ws (MU.Text "louse")]      "lice"
-  , tp [MU.Ws (MU.Text "man")]        "men"
-  , tp [MU.Ws (MU.Text "mouse")]      "mice"
-  , tp [MU.Ws (MU.Text "tooth")]      "teeth"
-  , tp [MU.Ws (MU.Text "woman")]      "women"
-  , tp [MU.Ws (MU.Text "buffalo")]    "buffalo"
-  , tp [MU.Ws (MU.Text "deer")]       "deer"
-  , tp [MU.Ws (MU.Text "the moose")]  "the moose"
-  , tp [MU.Ws (MU.Text "sheep")]      "sheep"
-  , tp [MU.Ws (MU.Text "bison")]      "bison"
-  , tp [MU.Ws (MU.Text "salmon")]     "salmon"
-  , tp [MU.Ws (MU.Text "pike")]       "pike"
-  , tp [MU.Ws (MU.Text "trout")]      "trout"
-  , tp [MU.Ws (MU.Text "swine")]      "swine"
-  , tp [MU.Ws (MU.Text "aircraft")]   "aircraft"
-  , tp [MU.Ws (MU.Text "watercraft")] "watercraft"
-  , tp [MU.Ws (MU.Text "spacecraft")] "spacecraft"
-  , tp [MU.Ws (MU.Text "hovercraft")] "hovercraft"
-  , tp [MU.Ws (MU.Text "information")]     "information"
-  , tp [MU.Ws (MU.String "dog blue")]      "dog blues"
-  , tp [MU.Ws (MU.Ordinal 1)]              "firsts"
-  , tp [MU.Ws (MU.Ws (MU.Text "do"))]      "doeses"
-  , tp [MU.Ws (MU.NWs 1 (MU.Text "man"))]  "a men"
-  , tp [MU.Ws (MU.NthW 1 (MU.Text "man"))] "1st men"
-  , tp [MU.Ws (MU.AW (MU.Text "elf"))]     "an elves"
-  , tp [MU.Ws (MU.WWandW [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
-                                           "dog, eagle and parrots"
-  , tp [MU.Ws (MU.WWxW (MU.Text "and also")
-                       [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
-                                           "dog, eagle and also parrots"
-  , tp [MU.Ws (MU.Wown (MU.Text "uncle"))]
-                                           "uncle'ses"
-  , tp [MU.Ws (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
-                                           "uncle's dogs"
-  , tp [MU.Ws (MU.Phrase [MU.Text "uncle", MU.Text "dog"])]
-                                           "uncle dogs"
-  , tp [MU.Ws (MU.SubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                           "I does"
-  , tp [MU.Ws (MU.NotSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                           "I don't does"
-  , tp [MU.Ws (MU.QSubjectVerb (MU.Text "woman") (MU.Text "do"))]
-                                           "does woman does"
+  [ tp [MU.Ws "dog"]        "dogs"
+  , tp [MU.Ws "dogs"]       "dogses"
+  , tp [MU.Ws "blue dog"]   "blue dogs"
+  , tp [MU.Ws "blue dog  "] "blue dog  "
+  , tp [MU.Ws "blue dog."]  "blue dog."
+  , tp [MU.Ws "blue dog%"]  "blue dog%"
+  , tp [MU.Ws "bitch"]      "bitches"
+  , tp [MU.Ws "the fish"]   "the fishes"
+  , tp [MU.Ws "miss"]       "misses"
+  , tp [MU.Ws "buzz"]       "buzzes"
+  , tp [MU.Ws "box"]        "boxes"
+  , tp [MU.Ws "hajj"]       "hajjes"
+  , tp [MU.Ws "goto"]       "gotoes"
+  , tp [MU.Ws "igloo"]      "igloos"
+  , tp [MU.Ws "buy"]        "buys"
+  , tp [MU.Ws "try"]        "tries"
+  , tp [MU.Ws "canto"]      "cantos"
+  , tp [MU.Ws "homo"]       "homos"
+  , tp [MU.Ws "photo"]      "photos"
+  , tp [MU.Ws "nice zero"]  "nice zeros"
+  , tp [MU.Ws "piano"]      "pianos"
+  , tp [MU.Ws "portico"]    "porticos"
+  , tp [MU.Ws "pro"]        "pros"
+  , tp [MU.Ws "quarto"]     "quartos"
+  , tp [MU.Ws "kimono"]     "kimonos"
+  , tp [MU.Ws "calf"]       "calves"
+  , tp [MU.Ws "leaf"]       "leaves"
+  , tp [MU.Ws "knife"]      "knives"
+  , tp [MU.Ws "life"]       "lives"
+  , tp [MU.Ws "dwarf"]      "dwarfs"
+  , tp [MU.Ws "hoof"]       "hooves"
+  , tp [MU.Ws "elf"]        "elves"
+--, tp [MU.Ws "staff"]      "staves"  -- depends on the meaning :(
+  , tp [MU.Ws "child"]      "children"
+  , tp [MU.Ws "foot"]       "feet"
+  , tp [MU.Ws "goose"]      "geese"
+  , tp [MU.Ws "louse"]      "lice"
+  , tp [MU.Ws "man"]        "men"
+  , tp [MU.Ws "mouse"]      "mice"
+  , tp [MU.Ws "tooth"]      "teeth"
+  , tp [MU.Ws "woman"]      "women"
+  , tp [MU.Ws "buffalo"]    "buffalo"
+  , tp [MU.Ws "deer"]       "deer"
+  , tp [MU.Ws "the moose"]  "the moose"
+  , tp [MU.Ws "sheep"]      "sheep"
+  , tp [MU.Ws "bison"]      "bison"
+  , tp [MU.Ws "salmon"]     "salmon"
+  , tp [MU.Ws "pike"]       "pike"
+  , tp [MU.Ws "trout"]      "trout"
+  , tp [MU.Ws "swine"]      "swine"
+  , tp [MU.Ws "aircraft"]   "aircraft"
+  , tp [MU.Ws "watercraft"] "watercraft"
+  , tp [MU.Ws "spacecraft"] "spacecraft"
+  , tp [MU.Ws "hovercraft"] "hovercraft"
+  , tp [MU.Ws "information"]                  "information"
+  , tp [MU.Ws (MU.String "dog blue")]         "dog blues"
+  , tp [MU.Ws (MU.Ordinal 1)]                 "firsts"
+  , tp [MU.Ws (MU.Ws "do")]                   "doeses"
+  , tp [MU.Ws (MU.NWs 1 "man")]               "a men"
+  , tp [MU.Ws (MU.NthW 1 "man")]              "1st men"
+  , tp [MU.Ws (MU.AW "elf")]                  "an elves"
+  , tp [MU.Ws (MU.WWandW ["dog", "eagle", "parrot"])]
+                                              "dog, eagle and parrots"
+  , tp [MU.Ws (MU.WWxW "and also" ["dog", "eagle", "parrot"])]
+                                              "dog, eagle and also parrots"
+  , tp [MU.Ws (MU.Wown "uncle")]              "uncle'ses"
+  , tp [MU.Ws (MU.WownW "uncle" "dog")]       "uncle's dogs"
+  , tp [MU.Ws (MU.Phrase ["uncle", "dog"])]   "uncle dogs"
+  , tp [MU.Ws (MU.SubjectVerb "I" "do")]      "I does"
+  , tp [MU.Ws (MU.NotSubjectVerb "I" "do")]   "I don't does"
+  , tp [MU.Ws (MU.QSubjectVerb "woman" "do")] "does woman does"
   ]
 
 testMakePhraseNumber :: Test
 testMakePhraseNumber = testGroup "number Part constructors"
-  [ tp [MU.Cardinal 3]                  "three"
-  , tp [MU.Cardinal 1111]               "1111"
-  , tp [MU.Cardinal 131]                "131"
-  , tp [MU.Cardinal 131, MU.Ordinal 2]  "131 second"
-  , tp [MU.Cardinal (-3)]               "-3"
-  , tp [MU.Cardinal 99999999999999992]  "99999999999999992"
-  , tp [MU.Ordinal 3]                   "third"
-  , tp [MU.Ordinal 1111]                "1111th"
-  , tp [MU.Ordinal 131]                 "131st"
-  , tp [MU.Ordinal 131, MU.Cardinal 2]  "131st two"
-  , tp [MU.Ordinal (-3)]                "-3rd"
-  , tp [MU.Ordinal 99999999999999992]   "99999999999999992nd"
-  , tp [MU.NWs 1 (MU.Text "blue dog")]  "a blue dog"
-  , tp [MU.NWs 2 (MU.Text "blue elf")]  "2 blue elves"
-  , tp [MU.NWs 2 (MU.Text " dog ")]     "2  dog "
-  , tp [MU.NWs 3 (MU.Text "leaf")]      "3 leaves"
-  , tp [MU.NWs 4 (MU.Text "sheep")]     "4 sheep"
-  , tp [MU.NWs (-1) (MU.Text "dog")]    "-1 dogs"
-  , tp [MU.NWs (-3) (MU.Text "dog")]    "-3 dogs"
-  , tp [MU.NWs 12 (MU.Text "")]         "12"
-  , tp [MU.NWs 5 (MU.Cardinal 1)]       "5 ones"
-  , tp [MU.NWs 4 (MU.Ordinal 2)]        "4 seconds"
-  , tp [MU.NthW 2 (MU.Text "blue dog")] "2nd blue dog"
-  , tp [MU.NthW 2 (MU.Text " dog ")]    "2nd  dog "
-  , tp [MU.NthW 3 (MU.Text "leaf")]     "3rd leaf"
-  , tp [MU.NthW 4 (MU.Text "sheep")]    "4th sheep"
-  , tp [MU.NthW (-3) (MU.Text "dog")]   "-3rd dog"
-  , tp [MU.NthW 12 (MU.Text "")]        "12th"
-  , tp [MU.NthW 51 (MU.Text "")]        "51st"
-  , tp [MU.NthW 52 (MU.Text "")]        "52nd"
-  , tp [MU.NthW 951 (MU.Text "")]       "951st"
-  , tp [MU.NthW 952 (MU.Text "")]       "952nd"
-  , tp [MU.NthW 112 (MU.Text "")]       "112th"
-  , tp [MU.NthW 712 (MU.Text "")]       "712th"
-  , tp [MU.NthW 5 (MU.Cardinal 1)]      "5th one"
-  , tp [MU.NthW 4 (MU.Ordinal 2)]       "4th second"
-  , tp [MU.NthW 4 (MU.NthW 7 (MU.Text "dog"))]    "4th 7th dog"
-  , tp [MU.NthW 4 (MU.NWs 7 (MU.Text "dog"))]     "4th 7 dogs"
-  , tp [MU.NWs 4 (MU.NWs 7 (MU.Text "dog"))]      "4 7 dogses"
-  , tp [MU.NWs 4 (MU.NthW 7 (MU.Text "elf"))]     "4 7th elves"
+  [ tp [MU.Cardinal 3]                 "three"
+  , tp [MU.Cardinal 1111]              "1111"
+  , tp [MU.Cardinal 131]               "131"
+  , tp [MU.Cardinal 131, MU.Ordinal 2] "131 second"
+  , tp [MU.Cardinal (-3)]              "-3"
+  , tp [MU.Cardinal 99999999999999992] "99999999999999992"
+  , tp [MU.Ordinal 3]                  "third"
+  , tp [MU.Ordinal 1111]               "1111th"
+  , tp [MU.Ordinal 131]                "131st"
+  , tp [MU.Ordinal 131, MU.Cardinal 2] "131st two"
+  , tp [MU.Ordinal (-3)]               "-3rd"
+  , tp [MU.Ordinal 99999999999999992]  "99999999999999992nd"
+  , tp [MU.NWs 1 "blue dog"]           "a blue dog"
+  , tp [MU.NWs 2 "blue elf"]           "2 blue elves"
+  , tp [MU.NWs 2 " dog "]              "2  dog "
+  , tp [MU.NWs 3 "leaf"]               "3 leaves"
+  , tp [MU.NWs 4 "sheep"]              "4 sheep"
+  , tp [MU.NWs (-1) "dog"]             "-1 dogs"
+  , tp [MU.NWs (-3) "dog"]             "-3 dogs"
+  , tp [MU.NWs 12 ""]                  "12"
+  , tp [MU.NWs 5 (MU.Cardinal 1)]      "5 ones"
+  , tp [MU.NWs 4 (MU.Ordinal 2)]       "4 seconds"
+  , tp [MU.NthW 2 "blue dog"]          "2nd blue dog"
+  , tp [MU.NthW 2 " dog "]             "2nd  dog "
+  , tp [MU.NthW 3 "leaf"]              "3rd leaf"
+  , tp [MU.NthW 4 "sheep"]             "4th sheep"
+  , tp [MU.NthW (-3) "dog"]            "-3rd dog"
+  , tp [MU.NthW 12 ""]                 "12th"
+  , tp [MU.NthW 51 ""]                 "51st"
+  , tp [MU.NthW 52 ""]                 "52nd"
+  , tp [MU.NthW 951 ""]                "951st"
+  , tp [MU.NthW 952 ""]                "952nd"
+  , tp [MU.NthW 112 ""]                "112th"
+  , tp [MU.NthW 712 ""]                "712th"
+  , tp [MU.NthW 5 (MU.Cardinal 1)]     "5th one"
+  , tp [MU.NthW 4 (MU.Ordinal 2)]      "4th second"
+  , tp [MU.NthW 4 (MU.NthW 7 "dog")]   "4th 7th dog"
+  , tp [MU.NthW 4 (MU.NWs 7 "dog")]    "4th 7 dogs"
+  , tp [MU.NWs 4 (MU.NWs 7 "dog")]     "4 7 dogses"
+  , tp [MU.NWs 4 (MU.NthW 7 "elf")]    "4 7th elves"
   ]
 
 testMakePhraseIndefinite :: Test
 testMakePhraseIndefinite = testGroup "indefinite article"
-  [ tp [MU.AW (MU.Text "user")]                 "a user"
-  , tp [MU.AW (MU.Text "usual egg")]            "a usual egg"
-  , tp [MU.AW (MU.Text "ABC")]                  "an ABC"
-  , tp [MU.AW (MU.Text " ABC")]                 " ABC"
-  , tp [MU.AW (MU.Text "ABC ")]                 "an ABC "
-  , tp [MU.AW (MU.Text "SCUBA")]                "a SCUBA"
-  , tp [MU.AW (MU.Text "SSI")]                  "an SSI"
-  , tp [MU.AW (MU.String "yell")]               "a yell"
-  , tp [MU.AW (MU.Cardinal 3)]                  "a three"
-  , tp [MU.AW (MU.Cardinal 8)]                  "an eight"
-  , tp [MU.AW (MU.Cardinal 31)]                 "a 31"
-  , tp [MU.AW (MU.Cardinal 83)]                 "an 83"
-  , tp [MU.AW (MU.NWs 3 (MU.Text "dog"))]       "a 3 dogs"
-  , tp [MU.AW (MU.Ordinal 3)]                   "a third"
-  , tp [MU.AW (MU.Ordinal 8)]                   "an eighth"
-  , tp [MU.AW (MU.Ordinal 31)]                  "a 31st"
-  , tp [MU.AW (MU.Ordinal 83)]                  "an 83rd"
-  , tp [MU.AW (MU.NthW 3 (MU.Text "dog"))]      "a 3rd dog"
-  , tp [MU.AW (MU.AW (MU.Text "dog"))]          "an a dog"
-  , tp [MU.AW (MU.WWandW [MU.Text "dog", MU.Text "eagle", MU.Text "parrot"])]
-                                          "a dog, eagle and parrot"
-  , tp [MU.AW (MU.WWxW (MU.Text "or otherwise")
-                       [MU.Text "hour", MU.Text "eagle", MU.Text "parrot"])]
-                                          "an hour, eagle or otherwise parrot"
-  , tp [MU.AW (MU.Wown (MU.Text "uncle"))]
-                                          "an uncle's"
-  , tp [MU.AW (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
-                                          "an uncle's dog"
-  , tp [MU.AW (MU.Phrase [MU.Text "uncle", MU.Text "dog"])]
-                                          "an uncle dog"
-  , tp [MU.AW (MU.SubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                          "an I do"
-  , tp [MU.AW (MU.NotSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                          "an I don't do"
-  , tp [MU.AW (MU.QSubjectVerb (MU.Text "I") (MU.Text "do"))]
-                                          "a do I do"
+  [ tp [MU.AW "user"]             "a user"
+  , tp [MU.AW "usual egg"]        "a usual egg"
+  , tp [MU.AW "ABC"]              "an ABC"
+  , tp [MU.AW " ABC"]             " ABC"
+  , tp [MU.AW "ABC "]             "an ABC "
+  , tp [MU.AW "SCUBA"]            "a SCUBA"
+  , tp [MU.AW "SSI"]              "an SSI"
+  , tp [MU.AW (MU.String "yell")] "a yell"
+  , tp [MU.AW (MU.Cardinal 3)]    "a three"
+  , tp [MU.AW (MU.Cardinal 8)]    "an eight"
+  , tp [MU.AW (MU.Cardinal 31)]   "a 31"
+  , tp [MU.AW (MU.Cardinal 83)]   "an 83"
+  , tp [MU.AW (MU.NWs 3 "dog")]   "a 3 dogs"
+  , tp [MU.AW (MU.Ordinal 3)]     "a third"
+  , tp [MU.AW (MU.Ordinal 8)]     "an eighth"
+  , tp [MU.AW (MU.Ordinal 31)]    "a 31st"
+  , tp [MU.AW (MU.Ordinal 83)]    "an 83rd"
+  , tp [MU.AW (MU.NthW 3 "dog")]  "a 3rd dog"
+  , tp [MU.AW (MU.AW "dog")]      "an a dog"
+  , tp [MU.AW (MU.WWandW ["dog", "eagle", "parrot"])]
+                                            "a dog, eagle and parrot"
+  , tp [MU.AW (MU.WWxW "or otherwise" ["hour", "eagle", "car"])]
+                                            "an hour, eagle or otherwise car"
+  , tp [MU.AW (MU.Wown "uncle")]            "an uncle's"
+  , tp [MU.AW (MU.WownW "uncle" "dog")]     "an uncle's dog"
+  , tp [MU.AW (MU.Phrase ["uncle", "dog"])] "an uncle dog"
+  , tp [MU.AW (MU.SubjectVerb "I" "do")]    "an I do"
+  , tp [MU.AW (MU.NotSubjectVerb "I" "do")] "an I don't do"
+  , tp [MU.AW (MU.QSubjectVerb "I" "do")]   "a do I do"
   ]
 
 testMakePhraseEnumeration :: Test
 testMakePhraseEnumeration = testGroup "enumeration and collection"
-  [ tp [MU.WWandW [MU.String "dog", MU.Text "eagle", MU.Cardinal 7]]
+  [ tp [MU.WWandW [MU.String "dog", "eagle", MU.Cardinal 7]]
                                           "dog, eagle and seven"
-  , tp [MU.WWxW (MU.Text "then")
-                [MU.Ordinal 113, MU.AW (MU.String "eagle"), MU.Text "parrot"]]
+  , tp [MU.WWxW "then" [MU.Ordinal 113, MU.AW (MU.String "eagle"), "parrot"]]
                                           "113th, an eagle then parrot"
   , tp [MU.WWandW [ MU.String "I"
                   , MU.WWandW [MU.String "I", MU.Ordinal 31, MU.Cardinal 17]
-                  , MU.WWandW [MU.Text "I", MU.AW (MU.Ordinal 18)]
+                  , MU.WWandW ["I", MU.AW (MU.Ordinal 18)]
                   ]]
                                           "I, I, 31st and 17 and I and an 18th"
-  , tp [MU.WWxW (MU.Text " and perhaps%")
-                [MU.Text " dog ", MU.Text "", MU.Text "%eagle."]]
+  , tp [MU.WWxW " and perhaps%" [" dog ", "", "%eagle."]]
                                           " dog   and perhaps% %eagle."
   ]
 
 testMakePhrasePossesive :: Test
 testMakePhrasePossesive = testGroup "the possesive form"
-  [ tp [MU.Wown (MU.String "uncle")]                    "uncle's"
-  , tp [MU.Wown (MU.String " uncle ")]                  " uncle "
-  , tp [MU.Wown (MU.Text "")]                           ""
-  , tp [MU.Wown (MU.Text " ")]                          " "
-  , tp [MU.Wown (MU.Text "miss")]                       "miss'"
-  , tp [MU.Wown (MU.Text "YQS")]                        "YQS'"
-  , tp [MU.Wown (MU.Text "buzz")]                       "buzz's"
-  , tp [MU.Wown (MU.Text "box")]                        "box's"
-  , tp [MU.Wown (MU.Text "Who")]                        "Whose"
-  , tp [MU.Wown (MU.Text "I")]                          "mine"
-  , tp [MU.Wown (MU.Text "you")]                        "yours"
-  , tp [MU.Wown (MU.Text "he")]                         "his"
-  , tp [MU.Wown (MU.Text "She")]                        "Her"
-  , tp [MU.Wown (MU.Text "it")]                         "its"
-  , tp [MU.Wown (MU.Text "We")]                         "Ours"
-  , tp [MU.Wown (MU.Text "they")]                       "theirs"
+  [ tp [MU.Wown (MU.String "uncle")]   "uncle's"
+  , tp [MU.Wown (MU.String " uncle ")] " uncle "
+  , tp [MU.Wown ""]                    ""
+  , tp [MU.Wown " "]                   " "
+  , tp [MU.Wown "miss"]                "miss'"
+  , tp [MU.Wown "YQS"]                 "YQS'"
+  , tp [MU.Wown "buzz"]                "buzz's"
+  , tp [MU.Wown "box"]                 "box's"
+  , tp [MU.Wown "Who"]                 "Whose"
+  , tp [MU.Wown "I"]                   "mine"
+  , tp [MU.Wown "you"]                 "yours"
+  , tp [MU.Wown "he"]                  "his"
+  , tp [MU.Wown "She"]                 "Her"
+  , tp [MU.Wown "it"]                  "its"
+  , tp [MU.Wown "We"]                  "Ours"
+  , tp [MU.Wown "they"]                "theirs"
   , tp [MU.WownW (MU.String "uncle") (MU.String "dog")] "uncle's dog"
-  , tp [MU.WownW (MU.Text " uncle ") (MU.Text "dog")]   " uncle  dog"
-  , tp [MU.WownW (MU.Text "I") (MU.Text "")]            "my"
-  , tp [MU.WownW (MU.Text "") (MU.Text "dog")]          "dog"
-  , tp [MU.WownW (MU.Text "") (MU.Text "")]             ""
-  , tp [MU.WownW (MU.Text " ") (MU.Text " ")]           "   "
-  , tp [MU.WownW (MU.Text "miss") (MU.Text "dog")]      "miss' dog"
-  , tp [MU.WownW (MU.Text "YQS") (MU.Cardinal 33)]      "YQS' 33"
-  , tp [MU.WownW (MU.Text "buzz") (MU.Ordinal 21)]      "buzz's 21st"
-  , tp [MU.WownW (MU.Text "box") (MU.Text "")]          "box's"
-  , tp [MU.WownW (MU.Text "who") (MU.Text "dog")]       "whose dog"
-  , tp [MU.WownW (MU.Text "I") (MU.Text "dog")]         "my dog"
-  , tp [MU.WownW (MU.Text "you") (MU.Text "dog")]       "your dog"
-  , tp [MU.WownW (MU.Text "He") (MU.Text "dog")]        "His dog"
-  , tp [MU.WownW (MU.Text "she") (MU.Text "dog")]       "her dog"
-  , tp [MU.WownW (MU.Text "It") (MU.Text "dog")]        "Its dog"
-  , tp [MU.WownW (MU.Text "we") (MU.Text "dog")]        "our dog"
-  , tp [MU.WownW (MU.Text "They") (MU.Text "dog")]      "Their dog"
-  , tp [MU.Wown (MU.NWs 6 (MU.Text ""))]                "6's"
-  , tp [MU.Wown (MU.NthW 1 (MU.Text ""))]               "1st's"
-  , tp [MU.Wown (MU.Ws (MU.NWs 6 (MU.Text "")))]        "6s'"
-  , tp [MU.Wown (MU.WWandW [MU.Text "I", MU.Text "you"])]
-                                                        "I and yours"
-  , tp [MU.Wown (MU.WWandW [MU.Text "you", MU.Text "I"])]
-                                                        "you and mine"
-  , tp [MU.WownW (MU.WWandW [MU.Text "you", MU.Text "I"]) (MU.Text "dog")]
-                                                        "you and my dog"
-  , tp [MU.Wown (MU.Wown (MU.Text "it"))]               "its'"
-  , tp [MU.Wown $ MU.Wown $ MU.Wown $ MU.Wown $ MU.Text "it"]
-                                                        "its's'"
-  , tp [MU.Wown (MU.QSubjectVerb (MU.Text "I") (MU.Text "be"))]
-                                                        "am mine"
-  , tp [MU.Wown (MU.Text " do   I")]                    " do   mine"
-  , tp [MU.Wown (MU.Text " do   I ")]                   " do   I "
+  , tp [MU.WownW " uncle " "dog"]                       " uncle  dog"
+  , tp [MU.WownW "I" ""]                                "my"
+  , tp [MU.WownW "" "dog"]                              "dog"
+  , tp [MU.WownW "" ""]                                 ""
+  , tp [MU.WownW " " " "]                               "   "
+  , tp [MU.WownW "miss" "dog"]                          "miss' dog"
+  , tp [MU.WownW "YQS" (MU.Cardinal 33)]                "YQS' 33"
+  , tp [MU.WownW "buzz" (MU.Ordinal 21)]                "buzz's 21st"
+  , tp [MU.WownW "box" ""]                              "box's"
+  , tp [MU.WownW "who" "dog"]                           "whose dog"
+  , tp [MU.WownW "I" "dog"]                             "my dog"
+  , tp [MU.WownW "you" "dog"]                           "your dog"
+  , tp [MU.WownW "He" "dog"]                            "His dog"
+  , tp [MU.WownW "she" "dog"]                           "her dog"
+  , tp [MU.WownW "It" "dog"]                            "Its dog"
+  , tp [MU.WownW "we" "dog"]                            "our dog"
+  , tp [MU.WownW "They" "dog"]                          "Their dog"
+  , tp [MU.Wown (MU.NWs 6 "")]                          "6's"
+  , tp [MU.Wown (MU.NthW 1 "")]                         "1st's"
+  , tp [MU.Wown (MU.Ws (MU.NWs 6 ""))]                  "6s'"
+  , tp [MU.Wown (MU.WWandW ["I", "you"])]               "I and yours"
+  , tp [MU.Wown (MU.WWandW ["you", "I"])]               "you and mine"
+  , tp [MU.WownW (MU.WWandW ["you", "I"]) "dog"]        "you and my dog"
+  , tp [MU.Wown (MU.Wown "it")]                         "its'"
+  , tp [MU.Wown $ MU.Wown $ MU.Wown $ MU.Wown $ "it"]   "its's'"
+  , tp [MU.Wown (MU.QSubjectVerb "I" "be")]             "am mine"
+  , tp [MU.Wown " do   I"]                              " do   mine"
+  , tp [MU.Wown " do   I "]                             " do   I "
   ]
 
 testMakePhraseSubjectVerb :: Test
 testMakePhraseSubjectVerb = testGroup "subject and verb"
-  [ tp [MU.SubjectVerb (MU.Text "species") (MU.Text "look")]
-                                          "species looks"
-  , tp [MU.NotSubjectVerb (MU.Text "species") (MU.Text "look")]
-                                          "species doesn't look"
-  , tp [MU.QSubjectVerb (MU.Text "species") (MU.Text "look")]
-                                          "does species look"
-  , tp [MU.SubjectVerbPlural (MU.Text "species") (MU.Text "look")]
-                                          "species look"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "species") (MU.Text "look")]
-                                          "species don't look"
-  , tp [MU.QSubjectVerbPlural (MU.Text "species") (MU.Text "look")]
-                                          "do species look"
-  , tp [MU.SubjectVerb (MU.Text "I") (MU.Text "be")]
-                                          "I am"
-  , tp [MU.NotSubjectVerb (MU.Text "you") (MU.Text "be")]
-                                          "you aren't"
-  , tp [MU.QSubjectVerb (MU.Text "she") (MU.Text "be")]
-                                          "is she"
-  , tp [MU.SubjectVerbPlural (MU.Text "we") (MU.Text "be")]
-                                          "we are"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "I") (MU.Text "be")]
-                                          "I am not"
-  , tp [MU.QSubjectVerbPlural (MU.Text "they") (MU.Text "be")]
-                                          "are they"
-  , tp [MU.SubjectVerb (MU.Text "they") (MU.Text "be")]
-                                          "they are"
-  , tp [MU.NotSubjectVerb (MU.Text "we") (MU.Text "be")]
-                                          "we aren't"
-  , tp [MU.QSubjectVerb (MU.Text "it") (MU.Text "be")]
-                                          "is it"
-  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "be")]
-                                          "he is"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "be")]
-                                          "She isn't"
-  , tp [MU.QSubjectVerbPlural (MU.Text "You") (MU.Text "be")]
-                                          "are You"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "have")]
-                                          "Tom has"
-  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "have")]
-                                          "cat doesn't have"
-  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "have")]
-                                          "do they have"
-  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "have")]
-                                          "he has"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "have")]
-                                          "She doesn't have"
-  , tp [MU.QSubjectVerbPlural (MU.Text "Foos") (MU.Text "have")]
-                                          "do Foos have"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "do")]
-                                          "Tom does"
-  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "do")]
-                                          "cat doesn't do"
-  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "do")]
-                                          "do they do"
-  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "go")]
-                                          "he goes"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "go")]
-                                          "She doesn't go"
-  , tp [MU.QSubjectVerbPlural (MU.Text "Foos") (MU.Text "go")]
-                                          "do Foos go"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "can")]
-                                          "Tom can"
-  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "could")]
-                                          "cat couldn't"
-  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "must")]
-                                          "must they"
-  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "will")]
-                                          "he will"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "would")]
-                                          "She wouldn't"
-  , tp [MU.QSubjectVerbPlural (MU.Text "Foos") (MU.Text "shall")]
-                                          "shall Foos"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "should")]
-                                          "Tom should"
-  , tp [MU.NotSubjectVerb (MU.Text "cat") (MU.Text "ought")]
-                                          "cat oughtn't"
-  , tp [MU.QSubjectVerb (MU.Text "they") (MU.Text "may")]
-                                          "may they"
-  , tp [MU.SubjectVerbPlural (MU.Text "he") (MU.Text "might")]
-                                          "he might"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "had")]
-                                          "She hadn't"
-  , tp [MU.QSubjectVerbPlural (MU.Text "it") (MU.Text "copy down")]
-                                          "does it copy down"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "copy down")]
-                                          "Tom copies down"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "buzz")]
-                                          "Tom buzzes"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "it it")]
-                                          "Tom its it"
-  , tp [MU.SubjectVerb (MU.Text "Tom") (MU.Text "you you")]
-                                          "Tom yous you"
-  , tp [MU.SubjectVerb (MU.Text "You") (MU.Text "you you")]
-                                          "You you you"
-  , tp [MU.SubjectVerb (MU.Text "She") (MU.Text "do read")]
-                                          "She does read"
-  , tp [MU.SubjectVerb (MU.Text "She") (MU.Text "do do")]
-                                          "She does do"
-  , tp [MU.QSubjectVerbPlural (MU.Text "she") (MU.Text "do")]
-                                          "does she do"
-  , tp [MU.NotSubjectVerbPlural (MU.Text "She") (MU.Text "had had")]
-                                          "She hadn't had"
+  [ tp [MU.SubjectVerb "species" "look"]          "species looks"
+  , tp [MU.NotSubjectVerb "species" "look"]       "species doesn't look"
+  , tp [MU.QSubjectVerb "species" "look"]         "does species look"
+  , tp [MU.SubjectVerbPlural "species" "look"]    "species look"
+  , tp [MU.NotSubjectVerbPlural "species" "look"] "species don't look"
+  , tp [MU.QSubjectVerbPlural "species" "look"]   "do species look"
+  , tp [MU.SubjectVerb "I" "be"]                  "I am"
+  , tp [MU.NotSubjectVerb "you" "be"]             "you aren't"
+  , tp [MU.QSubjectVerb "she" "be"]               "is she"
+  , tp [MU.SubjectVerbPlural "we" "be"]           "we are"
+  , tp [MU.NotSubjectVerbPlural "I" "be"]         "I am not"
+  , tp [MU.QSubjectVerbPlural "they" "be"]        "are they"
+  , tp [MU.SubjectVerb "they" "be"]               "they are"
+  , tp [MU.NotSubjectVerb "we" "be"]              "we aren't"
+  , tp [MU.QSubjectVerb "it" "be"]                "is it"
+  , tp [MU.SubjectVerbPlural "he" "be"]           "he is"
+  , tp [MU.NotSubjectVerbPlural "She" "be"]       "She isn't"
+  , tp [MU.QSubjectVerbPlural "You" "be"]         "are You"
+  , tp [MU.SubjectVerb "Tom" "have"]              "Tom has"
+  , tp [MU.NotSubjectVerb "cat" "have"]           "cat doesn't have"
+  , tp [MU.QSubjectVerb "they" "have"]            "do they have"
+  , tp [MU.SubjectVerbPlural "he" "have"]         "he has"
+  , tp [MU.NotSubjectVerbPlural "She" "have"]     "She doesn't have"
+  , tp [MU.QSubjectVerbPlural "Foos" "have"]      "do Foos have"
+  , tp [MU.SubjectVerb "Tom" "do"]                "Tom does"
+  , tp [MU.NotSubjectVerb "cat" "do"]             "cat doesn't do"
+  , tp [MU.QSubjectVerb "they" "do"]              "do they do"
+  , tp [MU.SubjectVerbPlural "he" "go"]           "he goes"
+  , tp [MU.NotSubjectVerbPlural "She" "go"]       "She doesn't go"
+  , tp [MU.QSubjectVerbPlural "Foos" "go"]        "do Foos go"
+  , tp [MU.SubjectVerb "Tom" "can"]               "Tom can"
+  , tp [MU.NotSubjectVerb "cat" "could"]          "cat couldn't"
+  , tp [MU.QSubjectVerb "they" "must"]            "must they"
+  , tp [MU.SubjectVerbPlural "he" "will"]         "he will"
+  , tp [MU.NotSubjectVerbPlural "She" "would"]    "She wouldn't"
+  , tp [MU.QSubjectVerbPlural "Foos" "shall"]     "shall Foos"
+  , tp [MU.SubjectVerb "Tom" "should"]            "Tom should"
+  , tp [MU.NotSubjectVerb "cat" "ought"]          "cat oughtn't"
+  , tp [MU.QSubjectVerb "they" "may"]             "may they"
+  , tp [MU.SubjectVerbPlural "he" "might"]        "he might"
+  , tp [MU.NotSubjectVerbPlural "She" "had"]      "She hadn't"
+  , tp [MU.QSubjectVerbPlural "it" "copy down"]   "does it copy down"
+  , tp [MU.SubjectVerb "Tom" "copy down"]         "Tom copies down"
+  , tp [MU.SubjectVerb "Tom" "buzz"]              "Tom buzzes"
+  , tp [MU.SubjectVerb "Tom" "it it"]             "Tom its it"
+  , tp [MU.SubjectVerb "Tom" "you you"]           "Tom yous you"
+  , tp [MU.SubjectVerb "You" "you you"]           "You you you"
+  , tp [MU.SubjectVerb "She" "do read"]           "She does read"
+  , tp [MU.SubjectVerb "She" "do do"]             "She does do"
+  , tp [MU.QSubjectVerbPlural "she" "do"]         "does she do"
+  , tp [MU.NotSubjectVerbPlural "She" "had had"]  "She hadn't had"
   ]
 
 tc :: [MU.Part] -> T.Text -> Test
@@ -426,82 +352,75 @@ tc arg expect =
 
 testAllureOfTheStars:: Test
 testAllureOfTheStars = testGroup "Allure of the Stars utterances"
-  [ tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "displace")
-       , MU.Text "Haskell Alvin" ]
+  [ tc [ MU.SubjectVerb "you" "displace"
+       , "Haskell Alvin" ]
        "You displace Haskell Alvin."
-  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "drop")
-       , MU.NWs 3 $ MU.Text "royal blue vial" ]
+  , tc [ MU.SubjectVerb "you" "drop"
+       , MU.NWs 3 $ "royal blue vial" ]
        "You drop 3 royal blue vials."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "displace")
-       , MU.Text "you" ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "displace"
+       , "you" ]
        "Haskell Alvin displaces you."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "drop")
-       , MU.NWs 1 $ MU.Text "royal blue vial" ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "drop"
+       , MU.NWs 1 $ "royal blue vial" ]
        "Haskell Alvin drops a royal blue vial."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "gulp down")
-       , MU.AW $ MU.Text "royal blue vial" ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "gulp down"
+       , MU.AW $ "royal blue vial" ]
        "Haskell Alvin gulps down a royal blue vial."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "feel better") ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "feel better" ]
        "Haskell Alvin feels better."
-  , tc [ MU.SubjectVerb (MU.Text "the royal blue vial")
-                        (MU.Text "turn out to be")
-       , MU.NWs 1 $ MU.Text "vial of healing (+5)" ]
+  , tc [ MU.SubjectVerb "the royal blue vial" "turn out to be"
+       , MU.NWs 1 $ "vial of healing (+5)" ]
        "The royal blue vial turns out to be a vial of healing (+5)."
-  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "gulp down")
-       , MU.AW $ MU.Text "magenta vial" ]
+  , tc [ MU.SubjectVerb "you" "gulp down"
+       , MU.AW $ "magenta vial" ]
        "You gulp down a magenta vial."
-  , tc [ MU.SubjectVerb (MU.Text "the magenta vial")
-                        (MU.Text "turn out to be")
-       , MU.NWs 1 $ MU.Text "vial of rose water" ]
+  , tc [ MU.SubjectVerb "the magenta vial" "turn out to be"
+       , MU.NWs 1 $ "vial of rose water" ]
        "The magenta vial turns out to be a vial of rose water."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
-                        (MU.Text "trie to hit")
+  , tc [ MU.SubjectVerb "deranged household robot" "trie to hit"
          MU.:> ", but you block" ]
        "Deranged household robot tries to hit, but you block."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "hit")
-       , MU.Text "you" ]
+  , tc [ MU.SubjectVerb "deranged household robot" "hit"
+       , "you" ]
        "Deranged household robot hits you."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
-                        (MU.Text "pick up")
-       , MU.NWs 2 $ MU.Text "sharpened pipe", MU.Text "(3d1) (+1)" ]
+  , tc [ MU.SubjectVerb "deranged household robot" "pick up"
+       , MU.NWs 2 $ "sharpened pipe", "(3d1) (+1)" ]
        "Deranged household robot picks up 2 sharpened pipes (3d1) (+1)."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "hit")
-       , MU.Text"you with", MU.NWs 1 $ MU.Text "sharpened pipe (3d1) (+1)" ]
+  , tc [ MU.SubjectVerb "deranged household robot" "hit"
+       , MU.Text"you with", MU.NWs 1 $ "sharpened pipe (3d1) (+1)" ]
        "Deranged household robot hits you with a sharpened pipe (3d1) (+1)."
-  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "kick")
-       , MU.Text "deranged household robot" ]
+  , tc [ MU.SubjectVerb "you" "kick"
+       , "deranged household robot" ]
        "You kick deranged household robot."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "die") ]
+  , tc [ MU.SubjectVerb "deranged household robot" "die" ]
        "Deranged household robot dies."
-  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "find")
-       , MU.Text "a way downstairs" ]
+  , tc [ MU.SubjectVerb "you" "find"
+       , "a way downstairs" ]
        "You find a way downstairs."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "squash")
-       , MU.Text "you in a staircase accident" ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "squash"
+       , "you in a staircase accident" ]
        "Haskell Alvin squashes you in a staircase accident."
-  , tc [ MU.SubjectVerb (MU.Text "you") (MU.Text "die") ]
+  , tc [ MU.SubjectVerb "you" "die" ]
        "You die."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "find")
-       , MU.Text "a way downstairs" ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "find"
+       , "a way downstairs" ]
        "Haskell Alvin finds a way downstairs."
-  , tc [ MU.SubjectVerb (MU.Text "Haskell Alvin") (MU.Text "hit")
-       , MU.Text "deranged household robot" ]
+  , tc [ MU.SubjectVerb "Haskell Alvin" "hit"
+       , "deranged household robot" ]
        "Haskell Alvin hits deranged household robot."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot") (MU.Text "hit")
-       , MU.Text "Haskell Alvin" ]
+  , tc [ MU.SubjectVerb "deranged household robot" "hit"
+       , "Haskell Alvin" ]
        "Deranged household robot hits Haskell Alvin."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
-                        (MU.Text "try to hit")
+  , tc [ MU.SubjectVerb "deranged household robot" "try to hit"
          MU.:> ", but Haskell Alvin blocks" ]
        "Deranged household robot tries to hit, but Haskell Alvin blocks."
-  , tc [ MU.SubjectVerb (MU.Text "deformed monkey") (MU.Text "hit")
-       , MU.Text "deranged household robot" ]
+  , tc [ MU.SubjectVerb "deformed monkey" "hit"
+       , "deranged household robot" ]
        "Deformed monkey hits deranged household robot."
-  , tc [ MU.SubjectVerb (MU.NWs 1 $ MU.Text "flying billiard ball (1d1)")
-                        (MU.Text "hit")
-       , MU.Text "deranged household robot" ]
+  , tc [ MU.SubjectVerb (MU.NWs 1 "flying billiard ball (1d1)") "hit"
+       , "deranged household robot" ]
        "A flying billiard ball (1d1) hits deranged household robot."
-  , tc [ MU.SubjectVerb (MU.Text "deranged household robot")
-                        (MU.Text "hiss in pain") ]
+  , tc [ MU.SubjectVerb "deranged household robot" "hiss in pain" ]
        "Deranged household robot hisses in pain."
   ]
