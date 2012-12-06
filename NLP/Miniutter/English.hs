@@ -6,6 +6,7 @@ module NLP.Miniutter.English
 
 import Data.Char (toUpper, isAlphaNum)
 import Data.Text (Text)
+import Data.String (IsString(..))
 import qualified Data.Text as T
 import NLP.Minimorph.English
 import NLP.Minimorph.Util
@@ -37,7 +38,13 @@ data Part =
   | SubjectVerbPlural Part Part     -- ^ plural conj. (pronouns also singular)
   | NotSubjectVerbPlural Part Part  -- ^ plural negated
   | QSubjectVerbPlural Part Part    -- ^ plural question
-  deriving Show
+  deriving (Show, Eq, Ord)
+
+instance Read Part where
+  readsPrec p str = [(Text x, y) | (x, y) <- readsPrec p str]
+
+instance IsString Part where
+    fromString = Text . T.pack
 
 -- | Nouns with irregular plural form and nouns with irregular indefinite
 -- article.
