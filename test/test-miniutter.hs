@@ -54,17 +54,17 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , tp [MU.Text "blue", MU.Text ""]        "blue"
   , tp [MU.Text "", MU.Text "dog"]         "dog"
   , tp [MU.Text "", MU.Text ""]            ""
-  , tp [MU.Compound (MU.Text "blue") (MU.Text "dog")] "blue dog"
-  , tp [MU.Compound (MU.Text "blue") (MU.Text "")]    "blue"
-  , tp [MU.Compound (MU.Text "") (MU.Text "dog")]     "dog"
-  , tp [MU.Compound (MU.Text "") (MU.Text "")]        ""
-  , tp [MU.Ordinal 0 MU.:> ", but", MU.Ordinal 1]     "0th, but first"
-  , tp [MU.Cardinal 20 `MU.NoSp` MU.Cardinal 0]       "200"
-  , tp [MU.String " "]                     " "
-  , tp [MU.Text   " "]                     " "
-  , tp [MU.String " blue ", MU.String " dog "]            " blue   dog "
-  , tp [MU.Text " blue ", MU.Text " dog "]                " blue   dog "
-  , tp [MU.Compound (MU.Text " blue ") (MU.Text " dog ")] " blue   dog "
+  , tp [MU.Phrase [MU.Text "blue", MU.Text "dog"]]      "blue dog"
+  , tp [MU.Phrase [MU.Text "blue", MU.Text ""]]         "blue"
+  , tp [MU.Phrase [MU.Text "", MU.Text "dog"]]          "dog"
+  , tp [MU.Phrase [MU.Text "", MU.Text ""]]             ""
+  , tp [MU.Ordinal 0 MU.:> ", but", MU.Ordinal 1]       "0th, but first"
+  , tp [MU.Cardinal 20 MU.:> MU.Cardinal 0]             "200"
+  , tp [MU.String " "]                                  " "
+  , tp [MU.Text   " "]                                  " "
+  , tp [MU.String " blue ", MU.String " dog "]          " blue   dog "
+  , tp [MU.Text " blue ", MU.Text " dog "]              " blue   dog "
+  , tp [MU.Phrase [MU.Text " blue ", MU.Text " dog "]]  " blue   dog "
   , testCase "testPhrase makeClause and Capitalize" $
       assertEqual "makeClause == Capitalize makePhrase :> '.'"
         (MU.makePhrase MU.defIrregular
@@ -147,7 +147,7 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
                                            "uncle'ses"
   , tp [MU.Ws (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
                                            "uncle's dogs"
-  , tp [MU.Ws (MU.Compound (MU.Text "uncle") (MU.Text "dog"))]
+  , tp [MU.Ws (MU.Phrase [MU.Text "uncle", MU.Text "dog"])]
                                            "uncle dogs"
   , tp [MU.Ws (MU.SubjectVerb (MU.Text "I") (MU.Text "do"))]
                                            "I does"
@@ -231,7 +231,7 @@ testMakePhraseIndefinite = testGroup "indefinite article"
                                           "an uncle's"
   , tp [MU.AW (MU.WownW (MU.Text "uncle") (MU.Text "dog"))]
                                           "an uncle's dog"
-  , tp [MU.AW (MU.Compound (MU.Text "uncle") (MU.Text "dog"))]
+  , tp [MU.AW (MU.Phrase [MU.Text "uncle", MU.Text "dog"])]
                                           "an uncle dog"
   , tp [MU.AW (MU.SubjectVerb (MU.Text "I") (MU.Text "do"))]
                                           "an I do"

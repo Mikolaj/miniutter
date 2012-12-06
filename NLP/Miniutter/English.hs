@@ -28,9 +28,8 @@ data Part =
   | WWxW !Part ![Part]    -- ^ collection
   | Wown !Part            -- ^ non-premodifying possesive
   | WownW !Part !Part     -- ^ attributive possesive
-  | Compound !Part !Part  -- ^ space in-between, should very rarely be needed
-  | NoSp !Part !Part      -- ^ no space in between
-  | !Part :> !Text        -- ^ no space in between, a shorthand
+  | Phrase ![Part]        -- ^ space-separated sequence
+  | !Part :> !Part        -- ^ no space in between
   | Capitalize !Part      -- ^ make the first letter into a capital letter
   | SubjectVerb !Part !Part     -- ^ singular conj. (some pronouns plural)
   | NotSubjectVerb !Part !Part  -- ^ singular negated
@@ -86,10 +85,9 @@ makePart irr part = case part of
                in commas i lt
   Wown p -> onLastWord nonPremodifying (mkPart p)
   WownW p1 p2 -> onLastWord attributive (mkPart p1) <+> mkPart p2
-  Compound p1 p2 -> makePhrase irr [p1, p2]
-  NoSp p1 p2 -> mkPart p1 <> mkPart p2
+  Phrase lp -> makePhrase irr lp
+  p1 :> p2 -> mkPart p1 <> mkPart p2
   Capitalize p -> capitalize $ mkPart p
-  p :> t -> mkPart p <> t
   SubjectVerb          s v -> subjectVerb          (mkPart s) (mkPart v)
   NotSubjectVerb       s v -> notSubjectVerb       (mkPart s) (mkPart v)
   QSubjectVerb         s v -> qSubjectVerb         (mkPart s) (mkPart v)
