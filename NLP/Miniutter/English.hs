@@ -16,28 +16,28 @@ import qualified Data.Map as Map
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
 data Part =
-    String String       -- ^ handle for a String parameter
-  | Text Text           -- ^ handle for a Text parameter
-  | Cardinal Int        -- ^ cardinal number, spelled in full up to 10
-  | Ws Part             -- ^ plural form of a word
-  | NWs Int Part        -- ^ plural prefixed with a cardinal (not spelled)
-  | Ordinal Int         -- ^ ordinal number, spelled in full up to 10
-  | NthW Int Part       -- ^ word prefixed by an ordinal (not spelled)
-  | AW Part             -- ^ word with indefinite article
-  | WWandW [Part]       -- ^ enumeration
-  | WWxW Part [Part]    -- ^ collection
-  | Wown Part           -- ^ non-premodifying possesive
-  | WownW Part Part     -- ^ attributive possesive
-  | Compound Part Part  -- ^ separated with space, should very rarely be needed
-  | NoSp Part Part      -- ^ no space in between
-  | Part :> Text        -- ^ no space in between, a shorthand
-  | Capitalize Part     -- ^ make the first letter into a capital letter
-  | SubjectVerb Part Part     -- ^ singular conjugation (pronouns also plural)
-  | NotSubjectVerb Part Part  -- ^ singular negated
-  | QSubjectVerb Part Part    -- ^ singular question; add question mark by hand
-  | SubjectVerbPlural Part Part     -- ^ plural conj. (pronouns also singular)
-  | NotSubjectVerbPlural Part Part  -- ^ plural negated
-  | QSubjectVerbPlural Part Part    -- ^ plural question
+    String !String        -- ^ handle for a String parameter
+  | Text !Text            -- ^ handle for a Text parameter
+  | Cardinal !Int         -- ^ cardinal number, spelled in full up to 10
+  | Ws !Part              -- ^ plural form of a word
+  | NWs !Int !Part        -- ^ plural prefixed with a cardinal (not spelled)
+  | Ordinal !Int          -- ^ ordinal number, spelled in full up to 10
+  | NthW !Int !Part       -- ^ word prefixed by an ordinal (not spelled)
+  | AW !Part              -- ^ word with indefinite article
+  | WWandW ![Part]        -- ^ enumeration
+  | WWxW !Part ![Part]    -- ^ collection
+  | Wown !Part            -- ^ non-premodifying possesive
+  | WownW !Part !Part     -- ^ attributive possesive
+  | Compound !Part !Part  -- ^ space in-between, should very rarely be needed
+  | NoSp !Part !Part      -- ^ no space in between
+  | !Part :> !Text        -- ^ no space in between, a shorthand
+  | Capitalize !Part      -- ^ make the first letter into a capital letter
+  | SubjectVerb !Part !Part     -- ^ singular conj. (some pronouns plural)
+  | NotSubjectVerb !Part !Part  -- ^ singular negated
+  | QSubjectVerb !Part !Part    -- ^ singular question; no question mark
+  | SubjectVerbPlural !Part !Part     -- ^ plural conj. (some pronouns singular)
+  | NotSubjectVerbPlural !Part !Part  -- ^ plural negated
+  | QSubjectVerbPlural !Part !Part    -- ^ plural question
   deriving (Show, Eq, Ord)
 
 instance Read Part where
