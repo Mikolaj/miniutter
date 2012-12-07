@@ -140,154 +140,103 @@ addIndefinite (_, irrIndefinite) t =
     Just u  -> u <+> t
     Nothing -> indefiniteDet t <+> t
 
-disregardCase :: (Text -> Text -> a) -> Text -> Text -> a
-disregardCase f s v =
-  if s `elem` ["You", "He", "She", "It", "We", "They"]
-  then f (T.toLower s) v
-  else f s v
+data Person = Sg1st | Sg3rd | PlEtc
 
-verbSingular :: Text -> Text -> Text
-verbSingular "I"    "be" = "am"
-verbSingular "you"  "be" = "are"
-verbSingular "we"   "be" = "are"
-verbSingular "they" "be" = "are"
-verbSingular _      "be" = "is"
-verbSingular "I"    v = v
-verbSingular "you"  v = v
-verbSingular "we"   v = v
-verbSingular "they" v = v
-verbSingular _ "have" = "has"
-verbSingular _ "do"   = "does"
-verbSingular _ "go"   = "goes"
-verbSingular _ "can"    = "can"
-verbSingular _ "could"  = "could"
-verbSingular _ "must"   = "must"
-verbSingular _ "will"   = "will"
-verbSingular _ "would"  = "would"
-verbSingular _ "shall"  = "shall"
-verbSingular _ "should" = "should"
-verbSingular _ "ought"  = "ought"
-verbSingular _ "may"    = "may"
-verbSingular _ "might"  = "might"
-verbSingular _ "had"    = "had"
-verbSingular _ v = fst (defaultVerbStuff v)
+person :: Person -> Text -> Person
+person defaultPerson "i" = defaultPerson  -- letter 'i', not person 'I'
+person defaultPerson word =
+  case T.toLower word of
+    "i"    -> Sg1st
+    "he"   -> Sg3rd
+    "she"  -> Sg3rd
+    "it"   -> Sg3rd
+    "we"   -> PlEtc
+    "you"  -> PlEtc
+    "they" -> PlEtc
+    _      -> defaultPerson -- we don't try guessing singular vs plural
+
+personVerb :: Person -> Text -> Text
+personVerb Sg1st "be" = "am"
+personVerb PlEtc "be" = "are"
+personVerb Sg3rd "be" = "is"
+personVerb _ "can"    = "can"
+personVerb _ "could"  = "could"
+personVerb _ "must"   = "must"
+personVerb _ "will"   = "will"
+personVerb _ "would"  = "would"
+personVerb _ "shall"  = "shall"
+personVerb _ "should" = "should"
+personVerb _ "ought"  = "ought"
+personVerb _ "may"    = "may"
+personVerb _ "might"  = "might"
+personVerb _ "had"    = "had"
+personVerb Sg1st v = v
+personVerb PlEtc v = v
+personVerb Sg3rd "have" = "has"
+personVerb Sg3rd v = fst (defaultVerbStuff v)
 
 subjectVerb :: Text -> Text -> Text
 subjectVerb s v =
-  s <+> disregardCase (\s1 -> onFirstWord $ verbSingular s1) s v
-
-notVerbSingular :: Text -> Text -> Text
-notVerbSingular "I"    "be" = "am not"
-notVerbSingular "you"  "be" = "aren't"
-notVerbSingular "we"   "be" = "aren't"
-notVerbSingular "they" "be" = "aren't"
-notVerbSingular _      "be" = "isn't"
-notVerbSingular _ "can"    = "can't"
-notVerbSingular _ "could"  = "couldn't"
-notVerbSingular _ "must"   = "mustn't"
-notVerbSingular _ "will"   = "won't"
-notVerbSingular _ "would"  = "wouldn't"
-notVerbSingular _ "shall"  = "shan't"
-notVerbSingular _ "should" = "shouldn't"
-notVerbSingular _ "ought"  = "oughtn't"
-notVerbSingular _ "may"    = "may not"
-notVerbSingular _ "might"  = "might not"
-notVerbSingular _ "had"    = "hadn't"
-notVerbSingular "I"    v = "don't" <+> v
-notVerbSingular "you"  v = "don't" <+> v
-notVerbSingular "we"   v = "don't" <+> v
-notVerbSingular "they" v = "don't" <+> v
-notVerbSingular _ v = "doesn't" <+> v
-
-notSubjectVerb :: Text -> Text -> Text
-notSubjectVerb  s v =
-  s <+> disregardCase (\s1 -> onFirstWord $ notVerbSingular s1) s v
-
-qVerbSingular :: Text -> Text -> (Text, Text)
-qVerbSingular "I"    "be" = ("am", "")
-qVerbSingular "you"  "be" = ("are", "")
-qVerbSingular "we"   "be" = ("are", "")
-qVerbSingular "they" "be" = ("are", "")
-qVerbSingular _      "be" = ("is", "")
-qVerbSingular _ "can"    = ("can", "")
-qVerbSingular _ "could"  = ("could", "")
-qVerbSingular _ "must"   = ("must", "")
-qVerbSingular _ "will"   = ("will", "")
-qVerbSingular _ "would"  = ("would", "")
-qVerbSingular _ "shall"  = ("shall", "")
-qVerbSingular _ "should" = ("should", "")
-qVerbSingular _ "ought"  = ("ought", "")
-qVerbSingular _ "may"    = ("may", "")
-qVerbSingular _ "might"  = ("might", "")
-qVerbSingular _ "had"    = ("had", "")
-qVerbSingular "I"    v = ("do", v)
-qVerbSingular "you"  v = ("do", v)
-qVerbSingular "we"   v = ("do", v)
-qVerbSingular "they" v = ("do", v)
-qVerbSingular _ v = ("does", v)
-
-qSubjectVerb :: Text -> Text -> Text
-qSubjectVerb s v =
-  let (v1, v2) = disregardCase (\s1 -> onFirstWordPair $ qVerbSingular s1) s v
-  in v1 <+> s <+> v2
-
-verbPlural :: Text -> Text -> Text
-verbPlural s@"I"   v = verbSingular s v
-verbPlural s@"he"  v = verbSingular s v
-verbPlural s@"she" v = verbSingular s v
-verbPlural s@"it"  v = verbSingular s v
-verbPlural _ "be" = "are"
-verbPlural _ v = v
+  s <+> onFirstWord (personVerb $ person Sg3rd s) v
 
 subjectVerbPlural :: Text -> Text -> Text
 subjectVerbPlural s v =
-  s <+> disregardCase (\s1 -> onFirstWord $ verbPlural s1) s v
+  s <+> onFirstWord (personVerb $ person PlEtc s) v
 
-notVerbPlural :: Text -> Text -> Text
-notVerbPlural s@"I"   v = notVerbSingular s v
-notVerbPlural s@"he"  v = notVerbSingular s v
-notVerbPlural s@"she" v = notVerbSingular s v
-notVerbPlural s@"it"  v = notVerbSingular s v
-notVerbPlural _ "be" = "aren't"
-notVerbPlural _ "can"    = "can't"
-notVerbPlural _ "could"  = "couldn't"
-notVerbPlural _ "must"   = "mustn't"
-notVerbPlural _ "will"   = "won't"
-notVerbPlural _ "would"  = "wouldn't"
-notVerbPlural _ "shall"  = "shan't"
-notVerbPlural _ "should" = "shouldn't"
-notVerbPlural _ "ought"  = "oughtn't"
-notVerbPlural _ "may"    = "may not"
-notVerbPlural _ "might"  = "might not"
-notVerbPlural _ "had"    = "hadn't"
-notVerbPlural _ v = "don't" <+> v
+notPersonVerb :: Person -> Text -> Text
+notPersonVerb Sg1st "be" = "am not"
+notPersonVerb PlEtc "be" = "aren't"
+notPersonVerb Sg3rd "be" = "isn't"
+notPersonVerb _ "can"    = "can't"
+notPersonVerb _ "could"  = "couldn't"
+notPersonVerb _ "must"   = "mustn't"
+notPersonVerb _ "will"   = "won't"
+notPersonVerb _ "would"  = "wouldn't"
+notPersonVerb _ "shall"  = "shan't"
+notPersonVerb _ "should" = "shouldn't"
+notPersonVerb _ "ought"  = "oughtn't"
+notPersonVerb _ "may"    = "may not"
+notPersonVerb _ "might"  = "might not"
+notPersonVerb _ "had"    = "hadn't"
+notPersonVerb Sg1st v = "don't" <+> v
+notPersonVerb PlEtc v = "don't" <+> v
+notPersonVerb Sg3rd v = "doesn't" <+> v
+
+notSubjectVerb :: Text -> Text -> Text
+notSubjectVerb s v =
+  s <+> onFirstWord (notPersonVerb $ person Sg3rd s) v
 
 notSubjectVerbPlural :: Text -> Text -> Text
 notSubjectVerbPlural s v =
-  s <+> disregardCase (\s1 -> onFirstWord $ notVerbPlural s1) s v
+  s <+> onFirstWord (notPersonVerb $ person PlEtc s) v
 
-qVerbPlural :: Text -> Text -> (Text, Text)
-qVerbPlural s@"I"   v = qVerbSingular s v
-qVerbPlural s@"he"  v = qVerbSingular s v
-qVerbPlural s@"she" v = qVerbSingular s v
-qVerbPlural s@"it"  v = qVerbSingular s v
-qVerbPlural _ "be" = ("are", "")
-qVerbPlural _ "can"    = ("can", "")
-qVerbPlural _ "could"  = ("could", "")
-qVerbPlural _ "must"   = ("must", "")
-qVerbPlural _ "will"   = ("will", "")
-qVerbPlural _ "would"  = ("would", "")
-qVerbPlural _ "shall"  = ("shall", "")
-qVerbPlural _ "should" = ("should", "")
-qVerbPlural _ "ought"  = ("ought", "")
-qVerbPlural _ "may"    = ("may", "")
-qVerbPlural _ "might"  = ("might", "")
-qVerbPlural _ "had"    = ("had", "")
-qVerbPlural _ v = ("do", v)
+qPersonVerb :: Person -> Text -> (Text, Text)
+qPersonVerb Sg1st "be" = ("am", "")
+qPersonVerb PlEtc "be" = ("are", "")
+qPersonVerb Sg3rd "be" = ("is", "")
+qPersonVerb _ "can"    = ("can", "")
+qPersonVerb _ "could"  = ("could", "")
+qPersonVerb _ "must"   = ("must", "")
+qPersonVerb _ "will"   = ("will", "")
+qPersonVerb _ "would"  = ("would", "")
+qPersonVerb _ "shall"  = ("shall", "")
+qPersonVerb _ "should" = ("should", "")
+qPersonVerb _ "ought"  = ("ought", "")
+qPersonVerb _ "may"    = ("may", "")
+qPersonVerb _ "might"  = ("might", "")
+qPersonVerb _ "had"    = ("had", "")
+qPersonVerb Sg1st v = ("do", v)
+qPersonVerb PlEtc v = ("do", v)
+qPersonVerb Sg3rd v = ("does", v)
+
+qSubjectVerb :: Text -> Text -> Text
+qSubjectVerb s v =
+  let (v1, v2) = onFirstWordPair (qPersonVerb $ person Sg3rd s) v
+  in v1 <+> s <+> v2
 
 qSubjectVerbPlural :: Text -> Text -> Text
 qSubjectVerbPlural s v =
-  let (v1, v2) = disregardCase (\s1 -> onFirstWordPair $ qVerbPlural s1) s v
+  let (v1, v2) = onFirstWordPair (qPersonVerb $ person PlEtc s) v
   in v1 <+> s <+> v2
 
 nonPremodifying :: Text -> Text
