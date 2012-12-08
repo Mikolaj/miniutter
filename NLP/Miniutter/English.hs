@@ -1,7 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
-  ( Part(..), makeClause, makePhrase, defIrregular, (<>), (<+>), showT
+  ( Part(..), Person(..), Polarity(..)
+  , makeClause, makePhrase, defIrregular, (<>), (<+>), showT
   ) where
 
 import Data.Char (toUpper, isAlphaNum)
@@ -31,12 +32,11 @@ data Part =
   | Phrase ![Part]        -- ^ space-separated sequence
   | !Part :> !Part        -- ^ no space in between
   | Capitalize !Part      -- ^ make the first letter into a capital letter
-  | SubjectVerb !Part !Part     -- ^ singular conj. (some pronouns plural)
-  | NotSubjectVerb !Part !Part  -- ^ singular negated
-  | QSubjectVerb !Part !Part    -- ^ singular question; no question mark
-  | SubjectVerbPlural !Part !Part     -- ^ plural conj. (some pronouns singular)
-  | NotSubjectVerbPlural !Part !Part  -- ^ plural negated
-  | QSubjectVerbPlural !Part !Part    -- ^ plural question
+  | SubjectVerb !Person !Polarity !Part !Part
+                          -- ^ conjugation according to polarity,
+                          -- with a default person (pronouns override it)
+  | SubjectVerbSg !Part !Part
+                          -- ^ an abbreviation for Sg3rd and Yes
   deriving (Show, Eq, Ord)
 
 instance Read Part where
@@ -44,6 +44,12 @@ instance Read Part where
 
 instance IsString Part where
     fromString = Text . T.pack
+
+data Person = Sg1st | Sg3rd | PlEtc
+  deriving (Show, Eq, Ord)
+
+data Polarity = Yes | No | Why
+  deriving (Show, Eq, Ord)
 
 -- | Nouns with irregular plural form and nouns with irregular indefinite
 -- article.
@@ -88,12 +94,14 @@ makePart irr part = case part of
   Phrase lp -> makePhrase irr lp
   p1 :> p2 -> mkPart p1 <> mkPart p2
   Capitalize p -> capitalize $ mkPart p
-  SubjectVerb          s v -> subjectVerb          (mkPart s) (mkPart v)
-  NotSubjectVerb       s v -> notSubjectVerb       (mkPart s) (mkPart v)
-  QSubjectVerb         s v -> qSubjectVerb         (mkPart s) (mkPart v)
-  SubjectVerbPlural    s v -> subjectVerbPlural    (mkPart s) (mkPart v)
-  NotSubjectVerbPlural s v -> notSubjectVerbPlural (mkPart s) (mkPart v)
-  QSubjectVerbPlural   s v -> qSubjectVerbPlural   (mkPart s) (mkPart v)
+  SubjectVerb person Yes s v ->
+    subjectVerb person (mkPart s) (mkPart v)
+  SubjectVerb person No s v  ->
+    notSubjectVerb person (mkPart s) (mkPart v)
+  SubjectVerb person Why s v ->
+    qSubjectVerb person (mkPart s) (mkPart v)
+  SubjectVerbSg s v          ->
+    subjectVerb Sg3rd (mkPart s) (mkPart v)
  where
   mkPart = makePart irr
 
@@ -140,11 +148,9 @@ addIndefinite (_, irrIndefinite) t =
     Just u  -> u <+> t
     Nothing -> indefiniteDet t <+> t
 
-data Person = Sg1st | Sg3rd | PlEtc
-
-person :: Person -> Text -> Person
-person defaultPerson "i" = defaultPerson  -- letter 'i', not person 'I'
-person defaultPerson word =
+guessPerson :: Person -> Text -> Person
+guessPerson defaultPerson "i" = defaultPerson  -- letter 'i', not person 'I'
+guessPerson defaultPerson word =
   case T.toLower word of
     "i"    -> Sg1st
     "he"   -> Sg3rd
@@ -153,7 +159,7 @@ person defaultPerson word =
     "we"   -> PlEtc
     "you"  -> PlEtc
     "they" -> PlEtc
-    _      -> defaultPerson -- we don't try guessing singular vs plural
+    _      -> defaultPerson -- we don't try guessing beyond pronouns
 
 personVerb :: Person -> Text -> Text
 personVerb Sg1st "be" = "am"
@@ -175,13 +181,9 @@ personVerb PlEtc v = v
 personVerb Sg3rd "have" = "has"
 personVerb Sg3rd v = fst (defaultVerbStuff v)
 
-subjectVerb :: Text -> Text -> Text
-subjectVerb s v =
-  s <+> onFirstWord (personVerb $ person Sg3rd s) v
-
-subjectVerbPlural :: Text -> Text -> Text
-subjectVerbPlural s v =
-  s <+> onFirstWord (personVerb $ person PlEtc s) v
+subjectVerb :: Person -> Text -> Text -> Text
+subjectVerb person s v =
+  s <+> onFirstWord (personVerb $ guessPerson person s) v
 
 notPersonVerb :: Person -> Text -> Text
 notPersonVerb Sg1st "be" = "am not"
@@ -202,13 +204,9 @@ notPersonVerb Sg1st v = "don't" <+> v
 notPersonVerb PlEtc v = "don't" <+> v
 notPersonVerb Sg3rd v = "doesn't" <+> v
 
-notSubjectVerb :: Text -> Text -> Text
-notSubjectVerb s v =
-  s <+> onFirstWord (notPersonVerb $ person Sg3rd s) v
-
-notSubjectVerbPlural :: Text -> Text -> Text
-notSubjectVerbPlural s v =
-  s <+> onFirstWord (notPersonVerb $ person PlEtc s) v
+notSubjectVerb :: Person -> Text -> Text -> Text
+notSubjectVerb person s v =
+  s <+> onFirstWord (notPersonVerb $ guessPerson person s) v
 
 qPersonVerb :: Person -> Text -> (Text, Text)
 qPersonVerb Sg1st "be" = ("am", "")
@@ -229,14 +227,9 @@ qPersonVerb Sg1st v = ("do", v)
 qPersonVerb PlEtc v = ("do", v)
 qPersonVerb Sg3rd v = ("does", v)
 
-qSubjectVerb :: Text -> Text -> Text
-qSubjectVerb s v =
-  let (v1, v2) = onFirstWordPair (qPersonVerb $ person Sg3rd s) v
-  in v1 <+> s <+> v2
-
-qSubjectVerbPlural :: Text -> Text -> Text
-qSubjectVerbPlural s v =
-  let (v1, v2) = onFirstWordPair (qPersonVerb $ person PlEtc s) v
+qSubjectVerb :: Person -> Text -> Text -> Text
+qSubjectVerb person s v =
+  let (v1, v2) = onFirstWordPair (qPersonVerb $ guessPerson person s) v
   in v1 <+> s <+> v2
 
 nonPremodifying :: Text -> Text
@@ -317,6 +310,7 @@ defIrrPlural = Map.fromList
   , ("hovercraft",  "hovercraft")
   , ("information", "information")
   ]
+
 -- | Default set of nouns with irregular indefinite article.
 defIrrIndefinite :: Map Text Text
 defIrrIndefinite = Map.fromList

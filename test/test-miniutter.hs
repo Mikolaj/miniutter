@@ -68,9 +68,9 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , testCase "testPhrase makeClause and Capitalize" $
       assertEqual "makeClause == Capitalize makePhrase :> '.'"
         (MU.makePhrase MU.defIrregular
-           [MU.Capitalize (MU.SubjectVerb "goblin" "hit") MU.:> "."])
+           [MU.Capitalize (MU.SubjectVerbSg "goblin" "hit") MU.:> "."])
         (MU.makeClause MU.defIrregular
-           [MU.SubjectVerb "goblin" "hit"])
+           [MU.SubjectVerbSg "goblin" "hit"])
   ]
 
 testMakePhrasePlural :: Test
@@ -143,9 +143,9 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.Wown "uncle")]              "uncle'ses"
   , tp [MU.Ws (MU.WownW "uncle" "dog")]       "uncle's dogs"
   , tp [MU.Ws (MU.Phrase ["uncle", "dog"])]   "uncle dogs"
-  , tp [MU.Ws (MU.SubjectVerb "I" "do")]      "I does"
-  , tp [MU.Ws (MU.NotSubjectVerb "I" "do")]   "I don't does"
-  , tp [MU.Ws (MU.QSubjectVerb "woman" "do")] "does woman does"
+  , tp [MU.Ws (MU.SubjectVerb MU.Sg3rd MU.Yes "I" "do")]     "I does"
+  , tp [MU.Ws (MU.SubjectVerb MU.Sg1st MU.No "Me" "do")]      "Me don't does"
+  , tp [MU.Ws (MU.SubjectVerb MU.Sg3rd MU.Why "woman" "do")] "does woman does"
   ]
 
 testMakePhraseNumber :: Test
@@ -220,9 +220,9 @@ testMakePhraseIndefinite = testGroup "indefinite article"
   , tp [MU.AW (MU.Wown "uncle")]            "an uncle's"
   , tp [MU.AW (MU.WownW "uncle" "dog")]     "an uncle's dog"
   , tp [MU.AW (MU.Phrase ["uncle", "dog"])] "an uncle dog"
-  , tp [MU.AW (MU.SubjectVerb "I" "do")]    "an I do"
-  , tp [MU.AW (MU.NotSubjectVerb "I" "do")] "an I don't do"
-  , tp [MU.AW (MU.QSubjectVerb "I" "do")]   "a do I do"
+  , tp [MU.AW (MU.SubjectVerbSg "I" "do")]  "an I do"
+  , tp [MU.AW (MU.SubjectVerb MU.Sg3rd MU.No "I" "do")]  "an I don't do"
+  , tp [MU.AW (MU.SubjectVerb MU.Sg3rd MU.Why "I" "do")] "a do I do"
   ]
 
 testMakePhraseEnumeration :: Test
@@ -284,64 +284,64 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.WownW (MU.WWandW ["you", "I"]) "dog"]        "you and my dog"
   , tp [MU.Wown (MU.Wown "it")]                         "its'"
   , tp [MU.Wown $ MU.Wown $ MU.Wown $ MU.Wown $ "it"]   "its's'"
-  , tp [MU.Wown (MU.QSubjectVerb "I" "be")]             "am mine"
+  , tp [MU.Wown (MU.SubjectVerb MU.Sg3rd MU.Why "I" "be")] "am mine"
   , tp [MU.Wown " do   I"]                              " do   mine"
   , tp [MU.Wown " do   I "]                             " do   I "
   ]
 
 testMakePhraseSubjectVerb :: Test
 testMakePhraseSubjectVerb = testGroup "subject and verb"
-  [ tp [MU.SubjectVerb "species" "look"]          "species looks"
-  , tp [MU.NotSubjectVerb "species" "look"]       "species doesn't look"
-  , tp [MU.QSubjectVerb "species" "look"]         "does species look"
-  , tp [MU.SubjectVerbPlural "species" "look"]    "species look"
-  , tp [MU.NotSubjectVerbPlural "species" "look"] "species don't look"
-  , tp [MU.QSubjectVerbPlural "species" "look"]   "do species look"
-  , tp [MU.SubjectVerb "I" "be"]                  "I am"
-  , tp [MU.NotSubjectVerb "you" "be"]             "you aren't"
-  , tp [MU.QSubjectVerb "she" "be"]               "is she"
-  , tp [MU.SubjectVerbPlural "we" "be"]           "we are"
-  , tp [MU.NotSubjectVerbPlural "I" "be"]         "I am not"
-  , tp [MU.QSubjectVerbPlural "they" "be"]        "are they"
-  , tp [MU.SubjectVerb "they" "be"]               "they are"
-  , tp [MU.NotSubjectVerb "we" "be"]              "we aren't"
-  , tp [MU.QSubjectVerb "it" "be"]                "is it"
-  , tp [MU.SubjectVerbPlural "he" "be"]           "he is"
-  , tp [MU.NotSubjectVerbPlural "She" "be"]       "She isn't"
-  , tp [MU.QSubjectVerbPlural "You" "be"]         "are You"
-  , tp [MU.SubjectVerb "Tom" "have"]              "Tom has"
-  , tp [MU.NotSubjectVerb "cat" "have"]           "cat doesn't have"
-  , tp [MU.QSubjectVerb "they" "have"]            "do they have"
-  , tp [MU.SubjectVerbPlural "he" "have"]         "he has"
-  , tp [MU.NotSubjectVerbPlural "She" "have"]     "She doesn't have"
-  , tp [MU.QSubjectVerbPlural "Foos" "have"]      "do Foos have"
-  , tp [MU.SubjectVerb "Tom" "do"]                "Tom does"
-  , tp [MU.NotSubjectVerb "cat" "do"]             "cat doesn't do"
-  , tp [MU.QSubjectVerb "they" "do"]              "do they do"
-  , tp [MU.SubjectVerbPlural "he" "go"]           "he goes"
-  , tp [MU.NotSubjectVerbPlural "She" "go"]       "She doesn't go"
-  , tp [MU.QSubjectVerbPlural "Foos" "go"]        "do Foos go"
-  , tp [MU.SubjectVerb "Tom" "can"]               "Tom can"
-  , tp [MU.NotSubjectVerb "cat" "could"]          "cat couldn't"
-  , tp [MU.QSubjectVerb "they" "must"]            "must they"
-  , tp [MU.SubjectVerbPlural "he" "will"]         "he will"
-  , tp [MU.NotSubjectVerbPlural "She" "would"]    "She wouldn't"
-  , tp [MU.QSubjectVerbPlural "Foos" "shall"]     "shall Foos"
-  , tp [MU.SubjectVerb "Tom" "should"]            "Tom should"
-  , tp [MU.NotSubjectVerb "cat" "ought"]          "cat oughtn't"
-  , tp [MU.QSubjectVerb "they" "may"]             "may they"
-  , tp [MU.SubjectVerbPlural "he" "might"]        "he might"
-  , tp [MU.NotSubjectVerbPlural "She" "had"]      "She hadn't"
-  , tp [MU.QSubjectVerbPlural "it" "copy down"]   "does it copy down"
-  , tp [MU.SubjectVerb "Tom" "copy down"]         "Tom copies down"
-  , tp [MU.SubjectVerb "Tom" "buzz"]              "Tom buzzes"
-  , tp [MU.SubjectVerb "Tom" "it it"]             "Tom its it"
-  , tp [MU.SubjectVerb "Tom" "you you"]           "Tom yous you"
-  , tp [MU.SubjectVerb "You" "you you"]           "You you you"
-  , tp [MU.SubjectVerb "She" "do read"]           "She does read"
-  , tp [MU.SubjectVerb "She" "do do"]             "She does do"
-  , tp [MU.QSubjectVerbPlural "she" "do"]         "does she do"
-  , tp [MU.NotSubjectVerbPlural "She" "had had"]  "She hadn't had"
+  [ tp [MU.SubjectVerbSg "species" "look"]               "species looks"
+  , tp [MU.SubjectVerb MU.Sg1st MU.No "species" "look"]  "species don't look"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "species" "look"] "does species look"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "species" "look"] "species look"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "species" "look"]  "species don't look"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "species" "look"] "do species look"
+  , tp [MU.SubjectVerbSg "I" "be"]                       "I am"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.No "you" "be"]        "you aren't"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "she" "be"]       "is she"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "we" "be"]        "we are"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "I" "be"]          "I am not"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "they" "be"]      "are they"
+  , tp [MU.SubjectVerbSg "they" "be"]                    "they are"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.No "we" "be"]         "we aren't"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "it" "be"]        "is it"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "he" "be"]        "he is"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "be"]        "She isn't"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "You" "be"]       "are You"
+  , tp [MU.SubjectVerbSg "Tom" "have"]                   "Tom has"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.No "cat" "have"]      "cat doesn't have"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "they" "have"]    "do they have"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "he" "have"]      "he has"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "have"]      "She doesn't have"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "Foos" "have"]    "do Foos have"
+  , tp [MU.SubjectVerbSg "Tom" "do"]                     "Tom does"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.No "cat" "do"]        "cat doesn't do"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "they" "do"]      "do they do"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "he" "go"]        "he goes"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "go"]        "She doesn't go"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "Foos" "go"]      "do Foos go"
+  , tp [MU.SubjectVerbSg "Tom" "can"]                    "Tom can"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.No "cat" "could"]     "cat couldn't"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "they" "must"]    "must they"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "he" "will"]      "he will"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "would"]     "She wouldn't"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "Foos" "shall"]   "shall Foos"
+  , tp [MU.SubjectVerbSg "Tom" "should"]                 "Tom should"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.No "cat" "ought"]     "cat oughtn't"
+  , tp [MU.SubjectVerb MU.Sg3rd MU.Why "they" "may"]     "may they"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Yes "he" "might"]     "he might"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "had"]       "She hadn't"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "it" "copy down"] "does it copy down"
+  , tp [MU.SubjectVerbSg "Tom" "copy down"       ]       "Tom copies down"
+  , tp [MU.SubjectVerbSg "Tom" "buzz"]                   "Tom buzzes"
+  , tp [MU.SubjectVerbSg "Tom" "it it"]                  "Tom its it"
+  , tp [MU.SubjectVerbSg "Tom" "you you"]                "Tom yous you"
+  , tp [MU.SubjectVerbSg "You" "you you"]                "You you you"
+  , tp [MU.SubjectVerbSg "She" "do read"]                "She does read"
+  , tp [MU.SubjectVerbSg "She" "do do"]                  "She does do"
+  , tp [MU.SubjectVerb MU.PlEtc MU.Why "she" "do"]       "does she do"
+  , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "had had"]   "She hadn't had"
   ]
 
 tc :: [MU.Part] -> T.Text -> Test
@@ -352,75 +352,75 @@ tc arg expect =
 
 testAllureOfTheStars:: Test
 testAllureOfTheStars = testGroup "Allure of the Stars utterances"
-  [ tc [ MU.SubjectVerb "you" "displace"
+  [ tc [ MU.SubjectVerbSg "you" "displace"
        , "Haskell Alvin" ]
        "You displace Haskell Alvin."
-  , tc [ MU.SubjectVerb "you" "drop"
+  , tc [ MU.SubjectVerbSg "you" "drop"
        , MU.NWs 3 $ "royal blue vial" ]
        "You drop 3 royal blue vials."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "displace"
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "displace"
        , "you" ]
        "Haskell Alvin displaces you."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "drop"
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "drop"
        , MU.NWs 1 $ "royal blue vial" ]
        "Haskell Alvin drops a royal blue vial."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "gulp down"
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "gulp down"
        , MU.AW $ "royal blue vial" ]
        "Haskell Alvin gulps down a royal blue vial."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "feel better" ]
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "feel better" ]
        "Haskell Alvin feels better."
-  , tc [ MU.SubjectVerb "the royal blue vial" "turn out to be"
+  , tc [ MU.SubjectVerbSg "the royal blue vial" "turn out to be"
        , MU.NWs 1 $ "vial of healing (+5)" ]
        "The royal blue vial turns out to be a vial of healing (+5)."
-  , tc [ MU.SubjectVerb "you" "gulp down"
+  , tc [ MU.SubjectVerbSg "you" "gulp down"
        , MU.AW $ "magenta vial" ]
        "You gulp down a magenta vial."
-  , tc [ MU.SubjectVerb "the magenta vial" "turn out to be"
+  , tc [ MU.SubjectVerbSg "the magenta vial" "turn out to be"
        , MU.NWs 1 $ "vial of rose water" ]
        "The magenta vial turns out to be a vial of rose water."
-  , tc [ MU.SubjectVerb "deranged household robot" "trie to hit"
+  , tc [ MU.SubjectVerbSg "deranged household robot" "trie to hit"
          MU.:> ", but you block" ]
        "Deranged household robot tries to hit, but you block."
-  , tc [ MU.SubjectVerb "deranged household robot" "hit"
+  , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
        , "you" ]
        "Deranged household robot hits you."
-  , tc [ MU.SubjectVerb "deranged household robot" "pick up"
+  , tc [ MU.SubjectVerbSg "deranged household robot" "pick up"
        , MU.NWs 2 $ "sharpened pipe", "(3d1) (+1)" ]
        "Deranged household robot picks up 2 sharpened pipes (3d1) (+1)."
-  , tc [ MU.SubjectVerb "deranged household robot" "hit"
+  , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
        , MU.Text"you with", MU.NWs 1 $ "sharpened pipe (3d1) (+1)" ]
        "Deranged household robot hits you with a sharpened pipe (3d1) (+1)."
-  , tc [ MU.SubjectVerb "you" "kick"
+  , tc [ MU.SubjectVerbSg "you" "kick"
        , "deranged household robot" ]
        "You kick deranged household robot."
-  , tc [ MU.SubjectVerb "deranged household robot" "die" ]
+  , tc [ MU.SubjectVerbSg "deranged household robot" "die" ]
        "Deranged household robot dies."
-  , tc [ MU.SubjectVerb "you" "find"
+  , tc [ MU.SubjectVerbSg "you" "find"
        , "a way downstairs" ]
        "You find a way downstairs."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "squash"
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "squash"
        , "you in a staircase accident" ]
        "Haskell Alvin squashes you in a staircase accident."
-  , tc [ MU.SubjectVerb "you" "die" ]
+  , tc [ MU.SubjectVerbSg "you" "die" ]
        "You die."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "find"
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "find"
        , "a way downstairs" ]
        "Haskell Alvin finds a way downstairs."
-  , tc [ MU.SubjectVerb "Haskell Alvin" "hit"
+  , tc [ MU.SubjectVerbSg "Haskell Alvin" "hit"
        , "deranged household robot" ]
        "Haskell Alvin hits deranged household robot."
-  , tc [ MU.SubjectVerb "deranged household robot" "hit"
+  , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
        , "Haskell Alvin" ]
        "Deranged household robot hits Haskell Alvin."
-  , tc [ MU.SubjectVerb "deranged household robot" "try to hit"
+  , tc [ MU.SubjectVerbSg "deranged household robot" "try to hit"
          MU.:> ", but Haskell Alvin blocks" ]
        "Deranged household robot tries to hit, but Haskell Alvin blocks."
-  , tc [ MU.SubjectVerb "deformed monkey" "hit"
+  , tc [ MU.SubjectVerbSg "deformed monkey" "hit"
        , "deranged household robot" ]
        "Deformed monkey hits deranged household robot."
-  , tc [ MU.SubjectVerb (MU.NWs 1 "flying billiard ball (1d1)") "hit"
+  , tc [ MU.SubjectVerbSg (MU.NWs 1 "flying billiard ball (1d1)") "hit"
        , "deranged household robot" ]
        "A flying billiard ball (1d1) hits deranged household robot."
-  , tc [ MU.SubjectVerb "deranged household robot" "hiss in pain" ]
+  , tc [ MU.SubjectVerbSg "deranged household robot" "hiss in pain" ]
        "Deranged household robot hisses in pain."
   ]
