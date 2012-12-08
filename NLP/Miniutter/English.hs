@@ -2,7 +2,7 @@
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
   ( Part(..), Person(..), Polarity(..)
-  , makeClause, makePhrase, defIrregular, (<>), (<+>), showT
+  , makeSentence, makePhrase, defIrregular, (<>), (<+>), showT
   ) where
 
 import Data.Char (toUpper, isAlphaNum)
@@ -59,12 +59,12 @@ type Irregular = (Map Text Text, Map Text Text)
 defIrregular :: Irregular
 defIrregular = (defIrrPlural, defIrrIndefinite)
 
--- | Realise a complete clause, capitalized, ending with a dot.
-makeClause :: Irregular -> [Part] -> Text
-makeClause irr l = capitalize $ makePhrase irr l `T.snoc` '.'
+-- | Realise a complete sentence, capitalized, ending with a dot.
+makeSentence :: Irregular -> [Part] -> Text
+makeSentence irr l = capitalize $ makePhrase irr l `T.snoc` '.'
 
--- | Realise a fraction of a clause. The spacing between parts
--- resembles the semantics of (<+>), that is, it ignores empty words.
+-- | Realise a phrase. The spacing between parts resembles
+-- the semantics of (<+>), that is, it ignores empty words.
 makePhrase :: Irregular -> [Part] -> Text
 makePhrase irr = T.intercalate (T.singleton ' ') . makeParts irr
 
