@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
-  ( Part(..), Person(..), Polarity(..)
+  ( Part(..), Person(..), Polarity(..), Irregular
   , makeSentence, makePhrase, defIrregular, (<>), (<+>), showT
   ) where
 
@@ -17,26 +17,26 @@ import qualified Data.Map as Map
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
 data Part =
-    String !String        -- ^ handle for a String parameter
-  | Text !Text            -- ^ handle for a Text parameter
-  | Cardinal !Int         -- ^ cardinal number, spelled in full up to 10
-  | Ws !Part              -- ^ plural form of a word
-  | NWs !Int !Part        -- ^ plural prefixed with a cardinal (not spelled)
-  | Ordinal !Int          -- ^ ordinal number, spelled in full up to 10
-  | NthW !Int !Part       -- ^ word prefixed by an ordinal (not spelled)
-  | AW !Part              -- ^ word with indefinite article
-  | WWandW ![Part]        -- ^ enumeration
-  | WWxW !Part ![Part]    -- ^ collection
-  | Wown !Part            -- ^ non-premodifying possesive
-  | WownW !Part !Part     -- ^ attributive possesive
-  | Phrase ![Part]        -- ^ space-separated sequence
-  | !Part :> !Part        -- ^ no space in between
-  | Capitalize !Part      -- ^ make the first letter into a capital letter
+    String !String      -- ^ handle for a String parameter
+  | Text !Text          -- ^ handle for a Text parameter
+  | Cardinal !Int       -- ^ cardinal number, spelled in full up to 10
+  | Ws !Part            -- ^ plural form of a word
+  | NWs !Int !Part      -- ^ plural prefixed with a cardinal (not spelled)
+  | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
+  | NthW !Int !Part     -- ^ word prefixed by an ordinal (not spelled)
+  | AW !Part            -- ^ word with indefinite article
+  | WWandW ![Part]      -- ^ enumeration
+  | WWxW !Part ![Part]  -- ^ collection
+  | Wown !Part          -- ^ non-premodifying possesive
+  | WownW !Part !Part   -- ^ attributive possesive
+  | Phrase ![Part]      -- ^ space-separated sequence
+  | !Part :> !Part      -- ^ no space in between
+  | Capitalize !Part    -- ^ make the first letter into a capital letter
   | SubjectVerb !Person !Polarity !Part !Part
-                          -- ^ conjugation according to polarity,
-                          -- with a default person (pronouns override it)
+                        -- ^ conjugation according to polarity,
+                        -- with a default person (pronouns override it)
   | SubjectVerbSg !Part !Part
-                          -- ^ an abbreviation for Sg3rd and Yes
+                        -- ^ an abbreviation for Sg3rd and Yes
   deriving (Show, Eq, Ord)
 
 instance Read Part where
@@ -45,9 +45,11 @@ instance Read Part where
 instance IsString Part where
     fromString = Text . T.pack
 
+-- | Persons: singular 1st, singular 3rd and the rest.
 data Person = Sg1st | Sg3rd | PlEtc
   deriving (Show, Eq, Ord)
 
+-- | Generalized polarity: affirmative, negative, interrogative.
 data Polarity = Yes | No | Why
   deriving (Show, Eq, Ord)
 
@@ -64,7 +66,7 @@ makeSentence :: Irregular -> [Part] -> Text
 makeSentence irr l = capitalize $ makePhrase irr l `T.snoc` '.'
 
 -- | Realise a phrase. The spacing between parts resembles
--- the semantics of (<+>), that is, it ignores empty words.
+-- the semantics of @(\<\+\>)@, that is, it ignores empty words.
 makePhrase :: Irregular -> [Part] -> Text
 makePhrase irr = T.intercalate (T.singleton ' ') . makeParts irr
 
@@ -94,12 +96,12 @@ makePart irr part = case part of
   Phrase lp -> makePhrase irr lp
   p1 :> p2 -> mkPart p1 <> mkPart p2
   Capitalize p -> capitalize $ mkPart p
-  SubjectVerb person Yes s v ->
-    subjectVerb person (mkPart s) (mkPart v)
-  SubjectVerb person No s v  ->
-    notSubjectVerb person (mkPart s) (mkPart v)
-  SubjectVerb person Why s v ->
-    qSubjectVerb person (mkPart s) (mkPart v)
+  SubjectVerb defaultPerson Yes s v ->
+    subjectVerb defaultPerson (mkPart s) (mkPart v)
+  SubjectVerb defaultPerson No s v  ->
+    notSubjectVerb defaultPerson (mkPart s) (mkPart v)
+  SubjectVerb defaultPerson Why s v ->
+    qSubjectVerb defaultPerson (mkPart s) (mkPart v)
   SubjectVerbSg s v          ->
     subjectVerb Sg3rd (mkPart s) (mkPart v)
  where
@@ -182,8 +184,8 @@ personVerb Sg3rd "have" = "has"
 personVerb Sg3rd v = fst (defaultVerbStuff v)
 
 subjectVerb :: Person -> Text -> Text -> Text
-subjectVerb person s v =
-  s <+> onFirstWord (personVerb $ guessPerson person s) v
+subjectVerb defaultPerson s v =
+  s <+> onFirstWord (personVerb $ guessPerson defaultPerson s) v
 
 notPersonVerb :: Person -> Text -> Text
 notPersonVerb Sg1st "be" = "am not"
@@ -205,8 +207,8 @@ notPersonVerb PlEtc v = "don't" <+> v
 notPersonVerb Sg3rd v = "doesn't" <+> v
 
 notSubjectVerb :: Person -> Text -> Text -> Text
-notSubjectVerb person s v =
-  s <+> onFirstWord (notPersonVerb $ guessPerson person s) v
+notSubjectVerb defaultPerson s v =
+  s <+> onFirstWord (notPersonVerb $ guessPerson defaultPerson s) v
 
 qPersonVerb :: Person -> Text -> (Text, Text)
 qPersonVerb Sg1st "be" = ("am", "")
@@ -228,8 +230,8 @@ qPersonVerb PlEtc v = ("do", v)
 qPersonVerb Sg3rd v = ("does", v)
 
 qSubjectVerb :: Person -> Text -> Text -> Text
-qSubjectVerb person s v =
-  let (v1, v2) = onFirstWordPair (qPersonVerb $ guessPerson person s) v
+qSubjectVerb defaultPerson s v =
+  let (v1, v2) = onFirstWordPair (qPersonVerb $ guessPerson defaultPerson s) v
   in v1 <+> s <+> v2
 
 nonPremodifying :: Text -> Text
