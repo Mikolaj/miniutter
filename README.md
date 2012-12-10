@@ -6,12 +6,12 @@ English sentences from short, parametrized descriptions.
 In a typical use, the structure of a clause is fixed,
 but the particular words to be used vary in arbitrary ways.
 The main goal of the library is to minimize the API
-complexity and the code size of programs using it.
+complexity and the code size of programs that use it.
 The library doesn't attempt to ban incorrect English sentences,
 but just make the creation of the simple correct ones easy
 and predictable.
 
-The library will be published on [Hackage] [1] and it's homepage
+The library is available from [Hackage] [1] and it's homepage
 and issue tracker is on [github] [2].
 
 Further information

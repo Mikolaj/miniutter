@@ -20,11 +20,11 @@ data Part =
     String !String      -- ^ handle for a String parameter
   | Text !Text          -- ^ handle for a Text parameter
   | Cardinal !Int       -- ^ cardinal number, spelled in full up to 10
-  | Ws !Part            -- ^ plural form of a word
+  | Ws !Part            -- ^ plural form of a phrase
   | NWs !Int !Part      -- ^ plural prefixed with a cardinal (not spelled)
   | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
-  | NthW !Int !Part     -- ^ word prefixed by an ordinal (not spelled)
-  | AW !Part            -- ^ word with indefinite article
+  | NthW !Int !Part     -- ^ phrase prefixed by an ordinal (not spelled)
+  | AW !Part            -- ^ phrase with indefinite article
   | WWandW ![Part]      -- ^ enumeration
   | WWxW !Part ![Part]  -- ^ collection
   | Wown !Part          -- ^ non-premodifying possesive
@@ -36,7 +36,7 @@ data Part =
                         -- ^ conjugation according to polarity,
                         -- with a default person (pronouns override it)
   | SubjectVerbSg !Part !Part
-                        -- ^ an abbreviation for Sg3rd and Yes
+                        -- ^ a shorthand for Sg3rd and Yes
   deriving (Show, Eq, Ord)
 
 instance Read Part where

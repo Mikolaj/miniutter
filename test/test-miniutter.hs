@@ -283,7 +283,7 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.Wown (MU.WWandW ["you", "I"])]               "you and mine"
   , tp [MU.WownW (MU.WWandW ["you", "I"]) "dog"]        "you and my dog"
   , tp [MU.Wown (MU.Wown "it")]                         "its'"
-  , tp [MU.Wown $ MU.Wown $ MU.Wown $ MU.Wown $ "it"]   "its's'"
+  , tp [MU.Wown $ MU.Wown $ MU.Wown $ MU.Wown "it"]     "its's'"
   , tp [MU.Wown (MU.SubjectVerb MU.Sg3rd MU.Why "I" "be")] "am mine"
   , tp [MU.Wown " do   I"]                              " do   mine"
   , tp [MU.Wown " do   I "]                             " do   I "
@@ -356,27 +356,27 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , "Haskell Alvin" ]
        "You displace Haskell Alvin."
   , tc [ MU.SubjectVerbSg "you" "drop"
-       , MU.NWs 3 $ "royal blue vial" ]
+       , MU.NWs 3 "royal blue vial" ]
        "You drop 3 royal blue vials."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "displace"
        , "you" ]
        "Haskell Alvin displaces you."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "drop"
-       , MU.NWs 1 $ "royal blue vial" ]
+       , MU.NWs 1 "royal blue vial" ]
        "Haskell Alvin drops a royal blue vial."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "gulp down"
-       , MU.AW $ "royal blue vial" ]
+       , MU.AW "royal blue vial" ]
        "Haskell Alvin gulps down a royal blue vial."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "feel better" ]
        "Haskell Alvin feels better."
   , tc [ MU.SubjectVerbSg "the royal blue vial" "turn out to be"
-       , MU.NWs 1 $ "vial of healing (+5)" ]
+       , MU.NWs 1 "vial of healing (+5)" ]
        "The royal blue vial turns out to be a vial of healing (+5)."
   , tc [ MU.SubjectVerbSg "you" "gulp down"
-       , MU.AW $ "magenta vial" ]
+       , MU.AW "magenta vial" ]
        "You gulp down a magenta vial."
   , tc [ MU.SubjectVerbSg "the magenta vial" "turn out to be"
-       , MU.NWs 1 $ "vial of rose water" ]
+       , MU.NWs 1 "vial of rose water" ]
        "The magenta vial turns out to be a vial of rose water."
   , tc [ MU.SubjectVerbSg "deranged household robot" "trie to hit"
          MU.:> ", but you block" ]
@@ -385,10 +385,10 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , "you" ]
        "Deranged household robot hits you."
   , tc [ MU.SubjectVerbSg "deranged household robot" "pick up"
-       , MU.NWs 2 $ "sharpened pipe", "(3d1) (+1)" ]
+       , MU.NWs 2 "sharpened pipe", "(3d1) (+1)" ]
        "Deranged household robot picks up 2 sharpened pipes (3d1) (+1)."
   , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
-       , MU.Text"you with", MU.NWs 1 $ "sharpened pipe (3d1) (+1)" ]
+       , MU.Text"you with", MU.NWs 1 "sharpened pipe (3d1) (+1)" ]
        "Deranged household robot hits you with a sharpened pipe (3d1) (+1)."
   , tc [ MU.SubjectVerbSg "you" "kick"
        , "deranged household robot" ]
