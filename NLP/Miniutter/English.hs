@@ -1,18 +1,22 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
   ( Part(..), Person(..), Polarity(..), Irregular
   , makeSentence, makePhrase, defIrregular, (<>), (<+>), showT
   ) where
 
-import Data.Char (toUpper, isAlphaNum)
-import Data.Text (Text)
-import Data.String (IsString(..))
-import qualified Data.Text as T
-import NLP.Minimorph.English
-import NLP.Minimorph.Util
+import Data.Binary
+import Data.Char (isAlphaNum, toUpper)
 import Data.Map (Map)
 import qualified Data.Map as Map
+import Data.String (IsString (..))
+import Data.Text (Text)
+import qualified Data.Text as T
+import Data.Text.Encoding (decodeUtf8, encodeUtf8)
+import GHC.Generics (Generic)
+import NLP.Minimorph.English
+import NLP.Minimorph.Util
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -37,7 +41,9 @@ data Part =
                         -- with a default person (pronouns override it)
   | SubjectVerbSg !Part !Part
                         -- ^ a shorthand for Sg3rd and Yes
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
+
+instance Binary Part
 
 instance Read Part where
   readsPrec p str = [(Text x, y) | (x, y) <- readsPrec p str]
@@ -47,11 +53,19 @@ instance IsString Part where
 
 -- | Persons: singular 1st, singular 3rd and the rest.
 data Person = Sg1st | Sg3rd | PlEtc
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
+
+instance Binary Person
 
 -- | Generalized polarity: affirmative, negative, interrogative.
 data Polarity = Yes | No | Why
-  deriving (Show, Eq, Ord)
+  deriving (Show, Eq, Ord, Generic)
+
+instance Binary Polarity
+
+instance Binary Text where
+   put = put . encodeUtf8
+   get = decodeUtf8 `fmap` get
 
 -- | Nouns with irregular plural form and nouns with irregular indefinite
 -- article.
