@@ -27,7 +27,7 @@ data Part =
   | Ws !Part            -- ^ plural form of a phrase
   | NWs !Int !Part      -- ^ plural prefixed with a cardinal (not spelled)
   | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
-  | NthW !Int !Part     -- ^ phrase prefixed by an ordinal (not spelled)
+  | Ord !Int            -- ^ ordinal number, not spelled
   | AW !Part            -- ^ phrase with indefinite article
   | WWandW ![Part]      -- ^ enumeration
   | WWxW !Part ![Part]  -- ^ collection
@@ -97,7 +97,7 @@ makePart irr part = case part of
   NWs 1 p -> mkPart (AW p)
   NWs n p -> showT n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
-  NthW n p -> ordinalNotSpelled n <+> mkPart p
+  Ord n -> ordinalNotSpelled n
   AW p -> onFirstWord (addIndefinite irr) (mkPart p)
   WWandW lp -> let i = "and"
                    lt = makeParts irr lp
