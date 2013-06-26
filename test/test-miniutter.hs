@@ -133,7 +133,7 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.String "dog blue")]         "dog blues"
   , tp [MU.Ws (MU.Ordinal 1)]                 "firsts"
   , tp [MU.Ws (MU.Ws "do")]                   "doeses"
-  , tp [MU.Ws (MU.NWs 1 "man")]               "a men"
+  , tp [MU.Ws (MU.CarWs 1 "man")]             "a men"
   , tp [MU.Ws (MU.Ord 1)]                     "1sts"
   , tp [MU.Ws (MU.AW "elf")]                  "an elves"
   , tp [MU.Ws (MU.WWandW ["dog", "eagle", "parrot"])]
@@ -162,16 +162,16 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.Ordinal 131, MU.Cardinal 2] "131st two"
   , tp [MU.Ordinal (-3)]               "-3rd"
   , tp [MU.Ordinal 99999999999999992]  "99999999999999992nd"
-  , tp [MU.NWs 1 "blue dog"]           "a blue dog"
-  , tp [MU.NWs 2 "blue elf"]           "2 blue elves"
-  , tp [MU.NWs 2 " dog "]              "2  dog "
-  , tp [MU.NWs 3 "leaf"]               "3 leaves"
-  , tp [MU.NWs 4 "sheep"]              "4 sheep"
-  , tp [MU.NWs (-1) "dog"]             "-1 dogs"
-  , tp [MU.NWs (-3) "dog"]             "-3 dogs"
-  , tp [MU.NWs 12 ""]                  "12"
-  , tp [MU.NWs 5 (MU.Cardinal 1)]      "5 ones"
-  , tp [MU.NWs 4 (MU.Ordinal 2)]       "4 seconds"
+  , tp [MU.CarWs 1 "blue dog"]         "a blue dog"
+  , tp [MU.CarWs 2 "blue elf"]         "2 blue elves"
+  , tp [MU.CardinalWs 2 " dog "]       "two  dog "
+  , tp [MU.CarWs 3 "leaf"]             "3 leaves"
+  , tp [MU.CardinalWs 4 "sheep"]       "four sheep"
+  , tp [MU.CarWs (-1) "dog"]           "-1 dogs"
+  , tp [MU.CardinalWs (-3) "dog"]      "-3 dogs"
+  , tp [MU.CardinalWs 12 ""]           "12"
+  , tp [MU.CarWs 5 (MU.Cardinal 1)]    "5 ones"
+  , tp [MU.CardinalWs 4 (MU.Ordinal 2)] "four seconds"
   , tp [MU.Ord 2]                      "2nd"
   , tp [MU.Ord 3]                      "3rd"
   , tp [MU.Ord 4]                      "4th"
@@ -183,12 +183,12 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.Ord 952]                    "952nd"
   , tp [MU.Ord 112]                    "112th"
   , tp [MU.Ord 712]                    "712th"
-  , tp [MU.Ord 5 MU.:> (MU.Cardinal 1)]   "5thone"
-  , tp [MU.Ord 4 MU.:> (MU.Ordinal 2)]    "4thsecond"
-  , tp [MU.Ord 4 MU.:> (MU.Ord 7)]        "4th7th"
-  , tp [MU.Ord 4 MU.:> (MU.NWs 7 "dog")]  "4th7 dogs"
-  , tp [MU.NWs 4 (MU.NWs 7 "dog")]        "4 7 dogses"
-  , tp [MU.NWs 4 (MU.Ord 7 MU.:> "elf")]  "4 7thelves"
+  , tp [MU.Ord 5 MU.:> (MU.Cardinal 1)]    "5thone"
+  , tp [MU.Ord 4 MU.:> (MU.Ordinal 2)]     "4thsecond"
+  , tp [MU.Ord 4 MU.:> (MU.Ord 7)]         "4th7th"
+  , tp [MU.Ord 4 MU.:> (MU.CarWs 7 "dog")] "4th7 dogs"
+  , tp [MU.CardinalWs 4 (MU.CarWs 7 "dog")] "four 7 dogses"
+  , tp [MU.CarWs 4 (MU.Ord 7 MU.:> "elf")] "4 7thelves"
   ]
 
 testMakePhraseIndefinite :: Test
@@ -205,7 +205,7 @@ testMakePhraseIndefinite = testGroup "indefinite article"
   , tp [MU.AW (MU.Cardinal 8)]    "an eight"
   , tp [MU.AW (MU.Cardinal 31)]   "a 31"
   , tp [MU.AW (MU.Cardinal 83)]   "an 83"
-  , tp [MU.AW (MU.NWs 3 "dog")]   "a 3 dogs"
+  , tp [MU.AW (MU.CarWs 3 "dog")] "a 3 dogs"
   , tp [MU.AW (MU.Ordinal 3)]     "a third"
   , tp [MU.AW (MU.Ordinal 8)]     "an eighth"
   , tp [MU.AW (MU.Ordinal 31)]    "a 31st"
@@ -275,9 +275,9 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.WownW "It" "dog"]                            "Its dog"
   , tp [MU.WownW "we" "dog"]                            "our dog"
   , tp [MU.WownW "They" "dog"]                          "Their dog"
-  , tp [MU.Wown (MU.NWs 6 "")]                          "6's"
+  , tp [MU.Wown (MU.CarWs 6 "")]                        "6's"
   , tp [MU.Wown (MU.Ord 1)]                             "1st's"
-  , tp [MU.Wown (MU.Ws (MU.NWs 6 ""))]                  "6s'"
+  , tp [MU.Wown (MU.Ws (MU.CardinalWs 6 ""))]           "sixes'"
   , tp [MU.Wown (MU.WWandW ["I", "you"])]               "I and yours"
   , tp [MU.Wown (MU.WWandW ["you", "I"])]               "you and mine"
   , tp [MU.WownW (MU.WWandW ["you", "I"]) "dog"]        "you and my dog"
@@ -355,13 +355,13 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , "Haskell Alvin" ]
        "You displace Haskell Alvin."
   , tc [ MU.SubjectVerbSg "you" "drop"
-       , MU.NWs 3 "royal blue vial" ]
-       "You drop 3 royal blue vials."
+       , MU.CardinalWs 3 "royal blue vial" ]
+       "You drop three royal blue vials."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "displace"
        , "you" ]
        "Haskell Alvin displaces you."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "drop"
-       , MU.NWs 1 "royal blue vial" ]
+       , MU.CarWs 1 "royal blue vial" ]
        "Haskell Alvin drops a royal blue vial."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "gulp down"
        , MU.AW "royal blue vial" ]
@@ -369,13 +369,13 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "feel better" ]
        "Haskell Alvin feels better."
   , tc [ MU.SubjectVerbSg "the royal blue vial" "turn out to be"
-       , MU.NWs 1 "vial of healing (+5)" ]
+       , MU.CarWs 1 "vial of healing (+5)" ]
        "The royal blue vial turns out to be a vial of healing (+5)."
   , tc [ MU.SubjectVerbSg "you" "gulp down"
        , MU.AW "magenta vial" ]
        "You gulp down a magenta vial."
   , tc [ MU.SubjectVerbSg "the magenta vial" "turn out to be"
-       , MU.NWs 1 "vial of rose water" ]
+       , MU.CarWs 1 "vial of rose water" ]
        "The magenta vial turns out to be a vial of rose water."
   , tc [ MU.SubjectVerbSg "deranged household robot" "trie to hit"
          MU.:> ", but you block" ]
@@ -384,10 +384,10 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , "you" ]
        "Deranged household robot hits you."
   , tc [ MU.SubjectVerbSg "deranged household robot" "pick up"
-       , MU.NWs 2 "sharpened pipe", "(3d1) (+1)" ]
+       , MU.CarWs 2 "sharpened pipe", "(3d1) (+1)" ]
        "Deranged household robot picks up 2 sharpened pipes (3d1) (+1)."
   , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
-       , MU.Text"you with", MU.NWs 1 "sharpened pipe (3d1) (+1)" ]
+       , MU.Text"you with", MU.CardinalWs 1 "sharpened pipe (3d1) (+1)" ]
        "Deranged household robot hits you with a sharpened pipe (3d1) (+1)."
   , tc [ MU.SubjectVerbSg "you" "kick"
        , "deranged household robot" ]
@@ -417,7 +417,7 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
   , tc [ MU.SubjectVerbSg "deformed monkey" "hit"
        , "deranged household robot" ]
        "Deformed monkey hits deranged household robot."
-  , tc [ MU.SubjectVerbSg (MU.NWs 1 "flying billiard ball (1d1)") "hit"
+  , tc [ MU.SubjectVerbSg (MU.CarWs 1 "flying billiard ball (1d1)") "hit"
        , "deranged household robot" ]
        "A flying billiard ball (1d1) hits deranged household robot."
   , tc [ MU.SubjectVerbSg "deranged household robot" "hiss in pain" ]

@@ -25,7 +25,8 @@ data Part =
   | Text !Text          -- ^ handle for a Text parameter
   | Cardinal !Int       -- ^ cardinal number, spelled in full up to 10
   | Ws !Part            -- ^ plural form of a phrase
-  | NWs !Int !Part      -- ^ plural prefixed with a cardinal (not spelled)
+  | CarWs !Int !Part       -- ^ plural prefixed with a cardinal, not spelled
+  | CardinalWs !Int !Part  -- ^ plural prefixed with a cardinal, spelled
   | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
   | Ord !Int            -- ^ ordinal number, not spelled
   | AW !Part            -- ^ phrase with indefinite article
@@ -94,8 +95,10 @@ makePart irr part = case part of
   Text t -> t
   Cardinal n -> cardinal n
   Ws p -> onLastWord (makePlural irr) (mkPart p)
-  NWs 1 p -> mkPart (AW p)
-  NWs n p -> showT n <+> onLastWord (makePlural irr) (mkPart p)
+  CarWs 1 p -> mkPart (AW p)
+  CarWs n p -> showT n <+> onLastWord (makePlural irr) (mkPart p)
+  CardinalWs 1 p -> mkPart (AW p)
+  CardinalWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
   Ord n -> ordinalNotSpelled n
   AW p -> onFirstWord (addIndefinite irr) (mkPart p)
