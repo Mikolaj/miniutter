@@ -183,12 +183,12 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.Ord 952]                    "952nd"
   , tp [MU.Ord 112]                    "112th"
   , tp [MU.Ord 712]                    "712th"
-  , tp [MU.Ord 5 MU.:> (MU.Cardinal 1)]    "5thone"
-  , tp [MU.Ord 4 MU.:> (MU.Ordinal 2)]     "4thsecond"
-  , tp [MU.Ord 4 MU.:> (MU.Ord 7)]         "4th7th"
-  , tp [MU.Ord 4 MU.:> (MU.CarWs 7 "dog")] "4th7 dogs"
+  , tp [MU.Ord 5 MU.:> MU.Cardinal 1]       "5thone"
+  , tp [MU.Ord 4 MU.:> MU.Ordinal 2]        "4thsecond"
+  , tp [MU.Ord 4 MU.:> MU.Ord 7]            "4th7th"
+  , tp [MU.Ord 4 MU.:> MU.CarWs 7 "dog"]    "4th7 dogs"
   , tp [MU.CardinalWs 4 (MU.CarWs 7 "dog")] "four 7 dogses"
-  , tp [MU.CarWs 4 (MU.Ord 7 MU.:> "elf")] "4 7thelves"
+  , tp [MU.CarWs 4 (MU.Ord 7 MU.:> "elf")]  "4 7thelves"
   ]
 
 testMakePhraseIndefinite :: Test
