@@ -1,7 +1,7 @@
-[![Build Status](https://secure.travis-ci.org/Mikolaj/miniutter.png)](http://travis-ci.org/Mikolaj/miniutter)
-
 miniutter
 =========
+
+[![Build Status](https://secure.travis-ci.org/Mikolaj/miniutter.png)](http://travis-ci.org/Mikolaj/miniutter)
 
 This library helps in generating simple present tense
 English sentences from short, parametrized descriptions.
