@@ -330,6 +330,8 @@ defIrrPlural = Map.fromList
   , ("information", "information")
   ]
 
+-- TODO: Remove the exceptions about 'u' as soon as we bump the minimorph
+-- dependency to 0.1.5.
 -- | Default set of nouns with irregular indefinite article.
 defIrrIndefinite :: Map Text Text
 defIrrIndefinite = Map.fromList
