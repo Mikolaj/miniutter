@@ -32,7 +32,7 @@ library
   build-depends:      base                 >= 4        && < 5,
                       binary               >= 0.6.3.0  && < 1,
                       ghc-prim             >= 0.2,
-                      text                 >= 0.11.2.3 && < 1,
+                      text                 >= 0.11.2.3 && < 2,
                       containers           >= 0.4.1    && < 1,
                       minimorph            >= 0.1.4    && < 1
 
@@ -51,7 +51,7 @@ test-suite test-miniutter
   hs-source-dirs:     test
   build-depends:      miniutter,
                       base                 >= 4        && < 5,
-                      text                 >= 0.11.2.3 && < 1,
+                      text                 >= 0.11.2.3 && < 2,
                       containers           >= 0.4.1    && < 1,
                       test-framework       >= 0.6      && < 1,
                       test-framework-hunit >= 0.2      && < 1,
