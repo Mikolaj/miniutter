@@ -15,7 +15,7 @@ bug-reports:   https://github.com/Mikolaj/miniutter/issues
 license:       BSD3
 license-file:  LICENSE
 tested-with:   GHC == 7.4.2, GHC == 7.6.1
-data-files:    LICENSE, README.md
+extra-source-files: LICENSE, README.md
 author:        Mikolaj Konarski
 maintainer:    Mikolaj Konarski <mikolaj.konarski@funktory.com>
 category:      Natural Language Processing
