@@ -50,7 +50,7 @@ instance Read Part where
   readsPrec p str = [(Text x, y) | (x, y) <- readsPrec p str]
 
 instance IsString Part where
-    fromString = Text . T.pack
+  fromString = Text . T.pack
 
 -- | Persons: singular 1st, singular 3rd and the rest.
 data Person = Sg1st | Sg3rd | PlEtc
