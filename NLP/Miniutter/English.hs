@@ -3,7 +3,7 @@
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
   ( Part(..), Person(..), Polarity(..), Irregular
-  , makeSentence, makePhrase, defIrregular, (<>), (<+>), showT
+  , makeSentence, makePhrase, defIrregular, (<>), (<+>)
   ) where
 
 import Data.Binary
@@ -96,7 +96,7 @@ makePart irr part = case part of
   Cardinal n -> cardinal n
   Ws p -> onLastWord (makePlural irr) (mkPart p)
   CarWs 1 p -> mkPart (AW p)
-  CarWs n p -> showT n <+> onLastWord (makePlural irr) (mkPart p)
+  CarWs n p -> T.pack (show n) <+> onLastWord (makePlural irr) (mkPart p)
   CardinalWs 1 p -> mkPart (AW p)
   CardinalWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
