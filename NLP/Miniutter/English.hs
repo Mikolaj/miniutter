@@ -16,7 +16,8 @@ import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import GHC.Generics (Generic)
 import NLP.Minimorph.English
-import NLP.Minimorph.Util
+import NLP.Minimorph.Util hiding (showT, (<>))
+import Data.Monoid ((<>))
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
