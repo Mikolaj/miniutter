@@ -44,6 +44,11 @@ data Part =
                         -- with a default person (pronouns override it)
   | SubjectVerbSg !Part !Part
                         -- ^ a shorthand for Sg3rd and Yes
+  | SubjectVVxV !Part !Person !Polarity !Part ![Part]
+                        -- ^ conjugation of all verbs according to polarity,
+                        -- with a default person (pronouns override it)
+  | SubjectVVandVSg !Part ![Part]
+                        -- ^ a shorthand for "and", Sg3rd and Yes
   deriving (Show, Eq, Ord, Generic)
 
 instance Binary Part
@@ -128,31 +133,50 @@ makePart irr part = case part of
     qSubjectVerb defaultPerson (mkPart s) (mkPart v)
   SubjectVerbSg s v          ->
     subjectVerb Sg3rd (mkPart s) (mkPart v)
+  SubjectVVxV x defaultPerson Yes s vs ->
+    subjectVVxV (mkPart x) defaultPerson (mkPart s) (makeParts irr vs)
+  SubjectVVxV x defaultPerson No s vs  ->
+    notSubjectVVxV (mkPart x) defaultPerson (mkPart s) (makeParts irr vs)
+  SubjectVVxV x defaultPerson Why s vs ->
+    qSubjectVVxV (mkPart x) defaultPerson (mkPart s) (makeParts irr vs)
+  SubjectVVandVSg s vs          ->
+    subjectVVxV "and" Sg3rd (mkPart s) (makeParts irr vs)
  where
   mkPart = makePart irr
 
 onFirstWord :: (Text -> Text) -> Text -> Text
 onFirstWord f t =
-  let (starting, rest) = T.span isWordLetter t
+  let (starting, restRaw) = T.span isWordLetter t
+      rest = T.dropWhile (not . isWordLetter) restRaw
+      fstarting = f starting
   in if T.null starting
-     then rest
-     else f starting <> rest
+     then t
+     else if T.null fstarting
+          then rest
+          else f starting <> restRaw
 
 onLastWord :: (Text -> Text) -> Text -> Text
 onLastWord f t =
   let (spanPrefix, spanRest) = T.span isWordLetter $ T.reverse t
-      (ending, rest) = (T.reverse spanPrefix, T.reverse spanRest)
+      (ending, restRaw) = (T.reverse spanPrefix, T.reverse spanRest)
+      rest = T.dropWhile (not . isWordLetter) restRaw
+      fending = f ending
   in if T.null ending
-     then rest
-     else rest <> f ending
+     then t
+     else if T.null fending
+          then rest
+          else restRaw <> f ending
 
 onFirstWordPair :: (Text -> (Text, Text)) -> Text -> (Text, Text)
 onFirstWordPair f t =
-  let (starting, rest) = T.span isWordLetter t
+  let (starting, restRaw) = T.span isWordLetter t
+      rest = T.dropWhile (not . isWordLetter) restRaw
+      (t1, t2) = f starting
   in if T.null starting
-     then (rest, "")
-     else let (t1, t2) = f starting
-          in (t1, t2 <> rest)
+     then (t, "")
+     else if T.null t2
+          then (t1, rest)
+          else (t1, t2 <> restRaw)
 
 isWordLetter :: Char -> Bool
 isWordLetter c = isAlphaNum c || c == '\'' || c == '-'
@@ -211,6 +235,11 @@ subjectVerb :: Person -> Text -> Text -> Text
 subjectVerb defaultPerson s v =
   s <+> onFirstWord (personVerb $ guessPerson defaultPerson s) v
 
+subjectVVxV :: Text -> Person -> Text -> [Text] -> Text
+subjectVVxV x defaultPerson s vs =
+  let conjugate = onFirstWord (personVerb $ guessPerson defaultPerson s)
+  in s <+> commas x (map conjugate vs)
+
 notPersonVerb :: Person -> Text -> Text
 notPersonVerb Sg1st "be" = "am not"
 notPersonVerb PlEtc "be" = "aren't"
@@ -233,6 +262,12 @@ notPersonVerb Sg3rd v = "doesn't" <+> v
 notSubjectVerb :: Person -> Text -> Text -> Text
 notSubjectVerb defaultPerson s v =
   s <+> onFirstWord (notPersonVerb $ guessPerson defaultPerson s) v
+
+notSubjectVVxV :: Text -> Person -> Text -> [Text] -> Text
+notSubjectVVxV _ _ s [] = s
+notSubjectVVxV x defaultPerson s (v : vs) =
+  let vNot = onFirstWord (notPersonVerb $ guessPerson defaultPerson s) v
+  in s <+> commas x (vNot : vs)
 
 qPersonVerb :: Person -> Text -> (Text, Text)
 qPersonVerb Sg1st "be" = ("am", "")
@@ -257,6 +292,13 @@ qSubjectVerb :: Person -> Text -> Text -> Text
 qSubjectVerb defaultPerson s v =
   let (v1, v2) = onFirstWordPair (qPersonVerb $ guessPerson defaultPerson s) v
   in v1 <+> s <+> v2
+
+qSubjectVVxV :: Text -> Person -> Text -> [Text] -> Text
+qSubjectVVxV _ _ s [] = s
+qSubjectVVxV x defaultPerson s (v : vs) =
+  let (v1, v2) = onFirstWordPair (qPersonVerb $ guessPerson defaultPerson s) v
+      glue = if T.null v2 then (<>) else (<+>)
+  in v1 <+> s `glue` commas x (v2 : vs)
 
 nonPremodifying :: Text -> Text
 nonPremodifying "who"  = "whose"

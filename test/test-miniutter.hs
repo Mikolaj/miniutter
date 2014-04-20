@@ -23,6 +23,7 @@ tests =
     , testMakePhraseEnumeration
     , testMakePhrasePossesive
     , testMakePhraseSubjectVerb
+    , testMakePhraseSubjectVVxV
     , testAllureOfTheStars
     ]
   ]
@@ -342,6 +343,61 @@ testMakePhraseSubjectVerb = testGroup "subject and verb"
   , tp [MU.SubjectVerbSg "She" "do do"]                  "She does do"
   , tp [MU.SubjectVerb MU.PlEtc MU.Why "she" "do"]       "does she do"
   , tp [MU.SubjectVerb MU.PlEtc MU.No "She" "had had"]   "She hadn't had"
+  ]
+
+testMakePhraseSubjectVVxV :: Test
+testMakePhraseSubjectVVxV = testGroup "subject and many verbs"
+  [ tp [MU.SubjectVVandVSg "species" ["look", "hook", "fly away", "have", "kiss"]]                  "species looks, hooks, flies away, has and kisses"
+  , tp [MU.SubjectVVxV "or" MU.Sg1st MU.No "species" ["look", "hook", "fly away", "have", "kiss"]]  "species don't look, hook, fly away, have or kiss"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "species" ["look", "hook", "fly away", "have", "kiss"]] "does species look, hook, fly away, have or kiss"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "species" ["look", "hook", "fly away", "have", "kiss"]] "species look, hook, fly away, have or kiss"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "species" ["look", "hook", "fly away", "have", "kiss"]]  "species don't look, hook, fly away, have or kiss"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "species" ["look", "hook", "fly away", "have", "kiss"]] "do species look, hook, fly away, have or kiss"
+  , tp [MU.SubjectVVandVSg "I" ["be", "have a hat", "be cool", "be", "may swim"]]                          "I am, have a hat, am cool, am and may swim"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.No "you" ["be", "have a hat", "be cool", "be", "may swim"]]        "you aren't, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "she" ["be", "have a hat", "be cool", "be", "may swim"]]       "is she, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "we" ["be", "have a hat", "be cool", "be", "may swim"]]        "we are, have a hat, are cool, are or may swim"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "I" ["be", "have a hat", "be cool", "be", "may swim"]]          "I am not, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "they" ["be", "have a hat", "be cool", "be", "may swim"]]      "are they, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVandVSg "they" ["be", "have a hat", "be cool", "be", "may swim"]]                       "they are, have a hat, are cool, are and may swim"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.No "we" ["be", "have a hat", "be cool", "be", "may swim"]]         "we aren't, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "it" ["be", "have a hat", "be cool", "be", "may swim"]]        "is it, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "he" ["be", "have a hat", "be cool", "be", "may swim"]]        "he is, has a hat, is cool, is or may swim"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "She" ["be", "have a hat", "be cool", "be", "may swim"]]        "She isn't, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "You" ["be", "have a hat", "be cool", "be", "may swim"]]       "are You, have a hat, be cool, be or may swim"
+  , tp [MU.SubjectVVandVSg "Tom" ["have", "talk to Bob", "kiss Helen"]]                      "Tom has, talks to Bob and kisses Helen"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.No "cat" ["have", "talk to Bob", "kiss Helen"]]      "cat doesn't have, talk to Bob or kiss Helen"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "they" ["have", "talk to Bob", "kiss Helen"]]    "do they have, talk to Bob or kiss Helen"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "he" ["have", "talk to Bob", "kiss Helen"]]      "he has, talks to Bob or kisses Helen"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "She" ["have", "talk to Bob", "kiss Helen"]]      "She doesn't have, talk to Bob or kiss Helen"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "Foos" ["have", "talk to Bob", "kiss Helen"]]    "do Foos have, talk to Bob or kiss Helen"
+  , tp [MU.SubjectVVandVSg "Tom" ["do", "mean well"]]                        "Tom does and means well"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.No "cat" ["do", "mean well"]]        "cat doesn't do or mean well"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "they" ["do", "mean well"]]      "do they do or mean well"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "he" ["go"]]        "he goes"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "She" ["go"]]        "She doesn't go"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "Foos" ["go"]]      "do Foos go"
+  , tp [MU.SubjectVVandVSg "Tom" ["can"]]                       "Tom can"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.No "cat" ["could"]]     "cat couldn't"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "they" ["must"]]    "must they"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "he" ["will"]]      "he will"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "She" ["would"]]     "She wouldn't"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "Foos" ["shall"]]   "shall Foos"
+  , tp [MU.SubjectVVandVSg "Tom" ["should"]]                    "Tom should"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.No "cat" ["ought"]]     "cat oughtn't"
+  , tp [MU.SubjectVVxV "or" MU.Sg3rd MU.Why "they" ["may"]]     "may they"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Yes "he" ["might"]]     "he might"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "She" ["had"]]       "She hadn't"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "it" ["copy down"]] "does it copy down"
+  , tp [MU.SubjectVVandVSg "Tom" ["copy down"]       ]       "Tom copies down"
+  , tp [MU.SubjectVVandVSg "Tom" ["buzz"]]                   "Tom buzzes"
+  , tp [MU.SubjectVVandVSg "Tom" ["it it"]]                  "Tom its it"
+  , tp [MU.SubjectVVandVSg "Tom" ["you you"]]                "Tom yous you"
+  , tp [MU.SubjectVVandVSg "You" ["you you"]]                "You you you"
+  , tp [MU.SubjectVVandVSg "She" ["do read"]]                "She does read"
+  , tp [MU.SubjectVVandVSg "She" ["do do"]]                  "She does do"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.Why "she" ["do"]]       "does she do"
+  , tp [MU.SubjectVVxV "or" MU.PlEtc MU.No "She" ["had had"]]   "She hadn't had"
   ]
 
 tc :: [MU.Part] -> T.Text -> Test
