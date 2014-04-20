@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
+import Data.Monoid
 import qualified Data.Text as T
 
 import Test.Framework (Test, defaultMain, testGroup)
@@ -58,8 +59,8 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , tp [MU.Phrase ["blue", ""]]            "blue"
   , tp [MU.Phrase ["", "dog"]]             "dog"
   , tp [MU.Phrase ["", ""]]                ""
-  , tp [MU.Ordinal 0 MU.:> ", but", MU.Ordinal 1] "0th, but first"
-  , tp [MU.Cardinal 20 MU.:> MU.Cardinal 0]       "200"
+  , tp [MU.Ordinal 0 <> ", but", MU.Ordinal 1] "0th, but first"
+  , tp [MU.Cardinal 20 <> MU.Cardinal 0]       "200"
   , tp [MU.String " "]                            " "
   , tp [  " "]                                    " "
   , tp [MU.String " blue ", MU.String " dog "]    " blue   dog "
@@ -68,7 +69,7 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , testCase "testPhrase makeSentence and Capitalize" $
       assertEqual "makeSentence == Capitalize makePhrase :> '.'"
         (MU.makePhrase MU.defIrregular
-           [MU.Capitalize (MU.SubjectVerbSg "goblin" "hit") MU.:> "."])
+           [MU.Capitalize (MU.SubjectVerbSg "goblin" "hit") <> "."])
         (MU.makeSentence MU.defIrregular
            [MU.SubjectVerbSg "goblin" "hit"])
   ]
@@ -183,12 +184,12 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.Ord 952]                    "952nd"
   , tp [MU.Ord 112]                    "112th"
   , tp [MU.Ord 712]                    "712th"
-  , tp [MU.Ord 5 MU.:> MU.Cardinal 1]       "5thone"
-  , tp [MU.Ord 4 MU.:> MU.Ordinal 2]        "4thsecond"
-  , tp [MU.Ord 4 MU.:> MU.Ord 7]            "4th7th"
-  , tp [MU.Ord 4 MU.:> MU.CarWs 7 "dog"]    "4th7 dogs"
+  , tp [MU.Ord 5 <> MU.Cardinal 1]       "5thone"
+  , tp [MU.Ord 4 <> MU.Ordinal 2]        "4thsecond"
+  , tp [MU.Ord 4 <> MU.Ord 7]            "4th7th"
+  , tp [MU.Ord 4 <> MU.CarWs 7 "dog"]    "4th7 dogs"
   , tp [MU.CardinalWs 4 (MU.CarWs 7 "dog")] "four 7 dogses"
-  , tp [MU.CarWs 4 (MU.Ord 7 MU.:> "elf")]  "4 7thelves"
+  , tp [MU.CarWs 4 (MU.Ord 7 <> "elf")]  "4 7thelves"
   ]
 
 testMakePhraseIndefinite :: Test
@@ -378,7 +379,7 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , MU.CarWs 1 "vial of rose water" ]
        "The magenta vial turns out to be a vial of rose water."
   , tc [ MU.SubjectVerbSg "deranged household robot" "trie to hit"
-         MU.:> ", but you block" ]
+         <> ", but you block" ]
        "Deranged household robot tries to hit, but you block."
   , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
        , "you" ]
@@ -412,7 +413,7 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , "Haskell Alvin" ]
        "Deranged household robot hits Haskell Alvin."
   , tc [ MU.SubjectVerbSg "deranged household robot" "try to hit"
-         MU.:> ", but Haskell Alvin blocks" ]
+         <> ", but Haskell Alvin blocks" ]
        "Deranged household robot tries to hit, but Haskell Alvin blocks."
   , tc [ MU.SubjectVerbSg "deformed monkey" "hit"
        , "deranged household robot" ]

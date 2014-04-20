@@ -10,6 +10,7 @@ import Data.Binary
 import Data.Char (isAlphaNum, toUpper)
 import Data.Map (Map)
 import qualified Data.Map as Map
+import Data.Monoid
 import Data.String (IsString (..))
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -17,7 +18,6 @@ import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import GHC.Generics (Generic)
 import NLP.Minimorph.English
 import NLP.Minimorph.Util hiding (showT, (<>))
-import Data.Monoid ((<>))
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -35,8 +35,9 @@ data Part =
   | WWxW !Part ![Part]  -- ^ collection
   | Wown !Part          -- ^ non-premodifying possesive
   | WownW !Part !Part   -- ^ attributive possesive
+  | Append !Part !Part  -- ^ no space in between
+  | !Part :> !Part      -- ^ no space in between  -- deprecated, use <>
   | Phrase ![Part]      -- ^ space-separated sequence
-  | !Part :> !Part      -- ^ no space in between
   | Capitalize !Part    -- ^ make the first letter into a capital letter
   | SubjectVerb !Person !Polarity !Part !Part
                         -- ^ conjugation according to polarity,
@@ -52,6 +53,10 @@ instance Read Part where
 
 instance IsString Part where
   fromString = Text . T.pack
+
+instance Monoid Part where
+  mempty = Text ""
+  mappend = Append
 
 -- | Persons: singular 1st, singular 3rd and the rest.
 data Person = Sg1st | Sg3rd | PlEtc
@@ -112,6 +117,7 @@ makePart irr part = case part of
   Wown p -> onLastWord nonPremodifying (mkPart p)
   WownW p1 p2 -> onLastWord attributive (mkPart p1) <+> mkPart p2
   Phrase lp -> makePhrase irr lp
+  Append p1 p2 -> mkPart p1 <> mkPart p2
   p1 :> p2 -> mkPart p1 <> mkPart p2
   Capitalize p -> capitalize $ mkPart p
   SubjectVerb defaultPerson Yes s v ->
