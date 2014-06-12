@@ -5,7 +5,7 @@ name:          miniutter
 -- PVP summary: +-+------- breaking API changes
 --              | | +----- non-breaking API additions
 --              | | | +--- code changes with no API change
-version:        0.4.3.0
+version:        0.4.4.0
 synopsis:      Simple English clause creation from arbitrary words
 description:   This library helps in generating simple present tense
                English sentences from short, parametrized descriptions.
