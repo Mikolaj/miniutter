@@ -106,7 +106,7 @@ makePart irr part = case part of
   Text t -> t
   Cardinal n -> cardinal n
   Ws p -> onLastWord (makePlural irr) (mkPart p)
-  CarWs 1 p -> mkPart (AW p)
+  CarWs 1 p -> mkPart (AW p)  -- TOOD: a variant without 'a'
   CarWs n p -> T.pack (show n) <+> onLastWord (makePlural irr) (mkPart p)
   CardinalWs 1 p -> mkPart (AW p)
   CardinalWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
@@ -127,19 +127,19 @@ makePart irr part = case part of
   Capitalize p -> capitalize $ mkPart p
   SubjectVerb defaultPerson Yes s v ->
     subjectVerb defaultPerson (mkPart s) (mkPart v)
-  SubjectVerb defaultPerson No s v  ->
+  SubjectVerb defaultPerson No s v ->
     notSubjectVerb defaultPerson (mkPart s) (mkPart v)
   SubjectVerb defaultPerson Why s v ->
     qSubjectVerb defaultPerson (mkPart s) (mkPart v)
-  SubjectVerbSg s v          ->
+  SubjectVerbSg s v ->
     subjectVerb Sg3rd (mkPart s) (mkPart v)
   SubjectVVxV x defaultPerson Yes s vs ->
     subjectVVxV (mkPart x) defaultPerson (mkPart s) (makeParts irr vs)
-  SubjectVVxV x defaultPerson No s vs  ->
+  SubjectVVxV x defaultPerson No s vs ->
     notSubjectVVxV (mkPart x) defaultPerson (mkPart s) (makeParts irr vs)
   SubjectVVxV x defaultPerson Why s vs ->
     qSubjectVVxV (mkPart x) defaultPerson (mkPart s) (makeParts irr vs)
-  SubjectVVandVSg s vs          ->
+  SubjectVVandVSg s vs ->
     subjectVVxV "and" Sg3rd (mkPart s) (makeParts irr vs)
  where
   mkPart = makePart irr
