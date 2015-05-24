@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+{-# LANGUAGE CPP, DeriveGeneric, OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
@@ -75,9 +75,11 @@ data Polarity = Yes | No | Why
 
 instance Binary Polarity
 
+#if !MIN_VERSION_text(1,2,1)
 instance Binary Text where
    put = put . encodeUtf8
    get = decodeUtf8 `fmap` get
+#endif
 
 -- | Nouns with irregular plural form and nouns with irregular indefinite
 -- article.
