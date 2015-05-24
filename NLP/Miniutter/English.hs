@@ -14,10 +14,17 @@ import Data.Monoid
 import Data.String (IsString (..))
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import GHC.Generics (Generic)
 import NLP.Minimorph.English
 import NLP.Minimorph.Util hiding (showT, (<>))
+
+#if !MIN_VERSION_text(1,2,1)
+import Data.Text.Encoding (decodeUtf8, encodeUtf8)
+
+instance Binary Text where
+   put = put . encodeUtf8
+   get = decodeUtf8 `fmap` get
+#endif
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -74,12 +81,6 @@ data Polarity = Yes | No | Why
   deriving (Show, Eq, Ord, Generic)
 
 instance Binary Polarity
-
-#if !MIN_VERSION_text(1,2,1)
-instance Binary Text where
-   put = put . encodeUtf8
-   get = decodeUtf8 `fmap` get
-#endif
 
 -- | Nouns with irregular plural form and nouns with irregular indefinite
 -- article.

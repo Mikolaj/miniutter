@@ -20,7 +20,7 @@ homepage:      https://github.com/Mikolaj/miniutter
 bug-reports:   https://github.com/Mikolaj/miniutter/issues
 license:       BSD3
 license-file:  LICENSE
-tested-with:   GHC == 7.4.2, GHC == 7.6.3, GHC == 7.8
+tested-with:   GHC == 7.4.2, GHC == 7.6.3, GHC == 7.8, GHC == 7.10
 extra-source-files: LICENSE, README.md
 author:        Mikolaj Konarski
 maintainer:    Mikolaj Konarski <mikolaj.konarski@funktory.com>
