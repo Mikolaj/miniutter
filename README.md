@@ -1,6 +1,8 @@
-miniutter [![Build Status](https://secure.travis-ci.org/Mikolaj/miniutter.png)](http://travis-ci.org/Mikolaj/miniutter)[![Build Status](https://drone.io/github.com/Mikolaj/miniutter/status.png)](https://drone.io/github.com/Mikolaj/miniutter/latest)
+miniutter
 =========
 
+[![Build Status](https://secure.travis-ci.org/Mikolaj/miniutter.png)](http://travis-ci.org/Mikolaj/miniutter)
+[![Hackage](https://img.shields.io/hackage/v/miniutter.svg)](https://hackage.haskell.org/package/miniutter)
 
 This library helps in generating simple present tense
 English sentences from short, parametrized descriptions.
@@ -12,17 +14,17 @@ The library doesn't attempt to ban incorrect English sentences,
 but just make the creation of the simple correct ones easy
 and predictable.
 
-The library is available from [Hackage] [1] and it's homepage
-and issue tracker is on [github] [2].
+The library is available from Hackage[1] and it's homepage
+and issue tracker is on github[2].
 
 Further information
 -------------------
 
-The library emerged when the needs of the [LambdaHack] [3] game engine
+The library emerged when the needs of the LambdaHack[3] game engine
 outgrew its rudimentary grammar code written by Andres Loeh.
-The library uses [minimorph] [4] by Eric Kow to tackle English spelling.
+The library uses minimorph[4] by Eric Kow to tackle English spelling.
 More information about natural language processing libraries in Haskell
-is gathered at the [Haskell wiki] [5].
+is gathered at the Haskell wiki[5].
 
 [1]: http://hackage.haskell.org/package/miniutter
 [2]: https://github.com/Mikolaj/miniutter
