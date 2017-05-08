@@ -2,7 +2,7 @@
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
   ( Part(..), Person(..), Polarity(..), Irregular
-  , makeSentence, makePhrase, defIrregular, (<>), (<+>)
+  , makeSentence, makePhrase, defIrregular, (<+>)
   ) where
 
 import Data.Binary
@@ -15,7 +15,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 import NLP.Minimorph.English
-import NLP.Minimorph.Util hiding (showT, (<>))
+import NLP.Minimorph.Util hiding ((<>))
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -107,7 +107,7 @@ makePart irr part = case part of
   Ordinal n -> ordinal n
   Ord n -> ordinalNotSpelled n
   AW p -> onFirstWord (addIndefinite irr) (mkPart p)
-  WWandW lp -> let i = "and"
+  WWandW lp -> let i = "and" :: Text
                    lt = makeParts irr lp
                in commas i lt
   WWxW x lp -> let i = mkPart x

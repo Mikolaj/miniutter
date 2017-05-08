@@ -48,7 +48,7 @@ library
   other-extensions:   OverloadedStrings
 --, DeriveGeneric
   ghc-options:        -Wall -fwarn-orphans -fwarn-tabs -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction -fwarn-unrecognised-pragmas
-  ghc-options:        -fno-warn-auto-orphans -fno-warn-implicit-prelude
+  ghc-options:        -fno-warn-implicit-prelude
   ghc-options:        -fno-ignore-asserts -funbox-strict-fields
 
 test-suite test-miniutter
@@ -68,5 +68,5 @@ test-suite test-miniutter
                       BangPatterns, RecordWildCards, NamedFieldPuns
   other-extensions:   OverloadedStrings
   ghc-options:        -Wall -fwarn-orphans -fwarn-tabs -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction -fwarn-unrecognised-pragmas
-  ghc-options:        -fno-warn-auto-orphans -fno-warn-implicit-prelude
+  ghc-options:        -fno-warn-implicit-prelude
   ghc-options:        -fno-ignore-asserts -funbox-strict-fields
