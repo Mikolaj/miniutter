@@ -343,7 +343,8 @@ attributive t = defaultPossesive t
 -- | Default set of nouns with irregular plural form.
 defIrrPlural :: Map Text Text
 defIrrPlural = Map.fromList
-  [ ("canto",       "cantos")
+  [ ("bro",         "bros")
+  , ("canto",       "cantos")
   , ("homo",        "homos")
   , ("photo",       "photos")
   , ("zero",        "zeros")
