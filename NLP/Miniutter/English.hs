@@ -335,20 +335,26 @@ attributive t = defaultPossesive t
 defIrrPlural :: Map Text Text
 defIrrPlural = Map.fromList
   [ ("bro",         "bros")
+  , ("Bro",         "Bros")
   , ("canto",       "cantos")
   , ("homo",        "homos")
   , ("photo",       "photos")
+  , ("Photo",       "Photos")
   , ("zero",        "zeros")
   , ("piano",       "pianos")
+  , ("Piano",       "Pianos")
   , ("portico",     "porticos")
   , ("pro",         "pros")
   , ("quarto",      "quartos")
   , ("kimono",      "kimonos")
   , ("knife",       "knives")
+  , ("Knife",       "Knives")
   , ("life",        "lives")
-  , ("dwarf",       "dwarfs")  -- not for ME dwarves, though
+  , ("Life",        "Lives")
+  , ("dwarf",       "dwarfs")  -- not for ME dwarves though
   , ("proof",       "proofs")
   , ("roof",        "roofs")
+  , ("Roof",        "Roofs")
   , ("turf",        "turfs")
   , ("child",       "children")
   , ("foot",        "feet")
@@ -368,10 +374,13 @@ defIrrPlural = Map.fromList
   , ("trout",       "trout")
   , ("swine",       "swine")
   , ("aircraft",    "aircraft")
+  , ("Aircraft",    "Aircraft")
   , ("watercraft",  "watercraft")
   , ("spacecraft",  "spacecraft")
+  , ("Spacecraft",  "Spacecraft")
   , ("hovercraft",  "hovercraft")
   , ("information", "information")
+  , ("Information", "Information")
   ]
 
 -- | Default set of nouns with irregular indefinite article.
