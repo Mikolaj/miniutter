@@ -5,17 +5,17 @@ module NLP.Miniutter.English
   , makeSentence, makePhrase, defIrregular, (<+>)
   ) where
 
-import Data.Binary
-import Data.Char (isAlphaNum, toUpper)
-import Data.Map (Map)
+import           Data.Binary
+import           Data.Char (isAlphaNum, toUpper)
+import           Data.Map (Map)
 import qualified Data.Map as Map
-import Data.Monoid
-import Data.String (IsString (..))
-import Data.Text (Text)
+import           Data.Semigroup as Sem
+import           Data.String (IsString (..))
+import           Data.Text (Text)
 import qualified Data.Text as T
-import GHC.Generics (Generic)
-import NLP.Minimorph.English
-import NLP.Minimorph.Util hiding ((<>))
+import           GHC.Generics (Generic)
+import           NLP.Minimorph.English
+import           NLP.Minimorph.Util hiding ((<>))
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -57,9 +57,16 @@ instance Read Part where
 instance IsString Part where
   fromString = Text . T.pack
 
+instance Sem.Semigroup Part where
+  (<>) = Append
+
 instance Monoid Part where
   mempty = Text ""
-  mappend = Append
+
+#if !(MIN_VERSION_base(4,11,0))
+  -- this is redundant starting with base-4.11 / GHC 8.4
+  mappend = (<>)
+#endif
 
 -- | Persons: singular 1st, singular 3rd and the rest.
 data Person = Sg1st | Sg3rd | PlEtc
