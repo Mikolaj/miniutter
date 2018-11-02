@@ -389,6 +389,7 @@ defIrrPlural = Map.fromList
   , ("information", "information")
   , ("Information", "Information")
   , ("whiff", "whiffs")
+  , ("graffiti", "graffiti")
   ]
 
 -- | Default set of nouns with irregular indefinite article.
