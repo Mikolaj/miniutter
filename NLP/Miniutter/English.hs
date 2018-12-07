@@ -32,7 +32,9 @@ data Part =
                         -- ^ plural prefixed with a cardinal, spelled
   | CarAWs !Int !Part   -- ^ plural prefixed with a cardinal, not spelled,
                         --   with "a" for 1 and "no" for 0
-  | CarWs !Int !Part    -- ^ plural prefixed with a cardinal, not spelled
+  | CarWs !Int !Part    -- ^ plural prefixed with a cardinal, not spelled;
+  | Car1Ws !Int !Part   -- ^ plural prefixed with a cardinal, not spelled;
+                        --   no prefix at all for 1
   | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
   | Ord !Int            -- ^ ordinal number, not spelled
   | AW !Part            -- ^ phrase with indefinite article
@@ -118,13 +120,15 @@ makePart irr part = case part of
   CardinalAWs 0 p -> "no" <+> onLastWord (makePlural irr) (mkPart p)
   CardinalAWs 1 p -> mkPart (AW p)
   CardinalAWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
-  CardinalWs 1 p -> cardinal 1 <+> mkPart p
+  CardinalWs 1 p -> cardinal 1 <+> mkPart p  -- spelled number
   CardinalWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
   CarAWs 0 p -> "no" <+> onLastWord (makePlural irr) (mkPart p)
   CarAWs 1 p -> mkPart (AW p)
   CarAWs n p -> tshow n <+> onLastWord (makePlural irr) (mkPart p)
-  CarWs 1 p -> tshow (1 :: Int) <+> mkPart p
+  CarWs 1 p -> "1" <+> mkPart p
   CarWs n p -> tshow n <+> onLastWord (makePlural irr) (mkPart p)
+  Car1Ws 1 p -> mkPart p  -- no number, article, anything; useful
+  Car1Ws n p -> tshow n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
   Ord n -> ordinalNotSpelled n
   AW p -> onFirstWord (addIndefinite irr) (mkPart p)
