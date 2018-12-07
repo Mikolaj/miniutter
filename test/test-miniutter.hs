@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import Data.Monoid
+import           Data.Monoid
 import qualified Data.Text as T
 
 import Test.Framework (Test, defaultMain, testGroup)
@@ -60,8 +60,9 @@ testMakePhraseVerbatim = testGroup "verbatim text Part constructors"
   , tp [MU.Phrase ["blue", ""]]            "blue"
   , tp [MU.Phrase ["", "dog"]]             "dog"
   , tp [MU.Phrase ["", ""]]                ""
-  , tp [MU.Ordinal 0 <> ", but", MU.Ordinal 1] "0th, but first"
-  , tp [MU.Cardinal 20 <> MU.Cardinal 0]       "200"
+  , tp [MU.Ordinal 0 <> ", but", MU.Ordinal 1] "zeroth, but first"
+  , tp [MU.Cardinal 20 <> MU.Cardinal 0]       "20zero"
+  , tp [MU.Cardinal 20 <> MU.Car 0]            "200"
   , tp [MU.String " "]                            " "
   , tp [  " "]                                    " "
   , tp [MU.String " blue ", MU.String " dog "]    " blue   dog "
@@ -135,7 +136,7 @@ testMakePhrasePlural = testGroup "plural form Part constructors"
   , tp [MU.Ws (MU.String "dog blue")]         "dog blues"
   , tp [MU.Ws (MU.Ordinal 1)]                 "firsts"
   , tp [MU.Ws (MU.Ws "do")]                   "doeses"
-  , tp [MU.Ws (MU.CarWs 1 "man")]             "a men"
+  , tp [MU.Ws (MU.CarAWs 1 "man")]            "a men"
   , tp [MU.Ws (MU.Ord 1)]                     "1sts"
   , tp [MU.Ws (MU.AW "elf")]                  "an elves"
   , tp [MU.Ws (MU.WWandW ["dog", "eagle", "parrot"])]
@@ -164,15 +165,22 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.Ordinal 131, MU.Cardinal 2] "131st two"
   , tp [MU.Ordinal (-3)]               "-3rd"
   , tp [MU.Ordinal 9999992]            "9999992nd"
-  , tp [MU.CarWs 1 "blue dog"]         "a blue dog"
+  , tp [MU.CarAWs 0 "blue dog"]        "no blue dogs"
+  , tp [MU.CarAWs 1 "blue dog"]        "a blue dog"
+  , tp [MU.CarWs 0 "blue dog"]         "0 blue dogs"
+  , tp [MU.CarWs 1 "blue dog"]         "1 blue dog"
   , tp [MU.CarWs 2 "blue elf"]         "2 blue elves"
   , tp [MU.CardinalWs 2 " dog "]       "two  dog "
-  , tp [MU.CarWs 3 "leaf"]             "3 leaves"
-  , tp [MU.CardinalWs 4 "sheep"]       "four sheep"
+  , tp [MU.CarAWs 3 "leaf"]            "3 leaves"
+  , tp [MU.CardinalAWs 0 "sheep"]      "no sheep"
+  , tp [MU.CardinalAWs 1 "sheep"]      "a sheep"
+  , tp [MU.CardinalAWs 4 "sheep"]      "four sheep"
   , tp [MU.CarWs (-1) "dog"]           "-1 dogs"
-  , tp [MU.CardinalWs (-3) "dog"]      "-3 dogs"
+  , tp [MU.CardinalAWs (-3) "dog"]     "-3 dogs"
   , tp [MU.CardinalWs 12 ""]           "12"
   , tp [MU.CarWs 5 (MU.Cardinal 1)]    "5 ones"
+  , tp [MU.CardinalWs 0 (MU.Ordinal 2)] "zero seconds"
+  , tp [MU.CardinalWs 1 (MU.Ordinal 2)] "one second"
   , tp [MU.CardinalWs 4 (MU.Ordinal 2)] "four seconds"
   , tp [MU.Ord 2]                      "2nd"
   , tp [MU.Ord 3]                      "3rd"
@@ -189,7 +197,7 @@ testMakePhraseNumber = testGroup "number Part constructors"
   , tp [MU.Ord 4 <> MU.Ordinal 2]        "4thsecond"
   , tp [MU.Ord 4 <> MU.Ord 7]            "4th7th"
   , tp [MU.Ord 4 <> MU.CarWs 7 "dog"]    "4th7 dogs"
-  , tp [MU.CardinalWs 4 (MU.CarWs 7 "dog")] "four 7 dogses"
+  , tp [MU.CardinalWs 4 (MU.CarAWs 7 "dog")] "four 7 dogses"
   , tp [MU.CarWs 4 (MU.Ord 7 <> "elf")]  "4 7thelves"
   ]
 
@@ -279,7 +287,7 @@ testMakePhrasePossesive = testGroup "the possesive form"
   , tp [MU.WownW "They" "dog"]                          "Their dog"
   , tp [MU.Wown (MU.CarWs 6 "")]                        "6's"
   , tp [MU.Wown (MU.Ord 1)]                             "1st's"
-  , tp [MU.Wown (MU.Ws (MU.CardinalWs 6 ""))]           "sixes'"
+  , tp [MU.Wown (MU.Ws (MU.CardinalAWs 6 ""))]          "sixes'"
   , tp [MU.Wown (MU.WWandW ["I", "you"])]               "I and yours"
   , tp [MU.Wown (MU.WWandW ["you", "I"])]               "you and mine"
   , tp [MU.WownW (MU.WWandW ["you", "I"]) "dog"]        "you and my dog"
@@ -418,7 +426,7 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        , "you" ]
        "Haskell Alvin displaces you."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "drop"
-       , MU.CarWs 1 "royal blue vial" ]
+       , MU.CarAWs 1 "royal blue vial" ]
        "Haskell Alvin drops a royal blue vial."
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "gulp down"
        , MU.AW "royal blue vial" ]
@@ -426,13 +434,13 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
   , tc [ MU.SubjectVerbSg "Haskell Alvin" "feel better" ]
        "Haskell Alvin feels better."
   , tc [ MU.SubjectVerbSg "the royal blue vial" "turn out to be"
-       , MU.CarWs 1 "vial of healing (+5)" ]
-       "The royal blue vial turns out to be a vial of healing (+5)."
+       , MU.CardinalWs 1 "vial of healing (+5)" ]
+       "The royal blue vial turns out to be one vial of healing (+5)."
   , tc [ MU.SubjectVerbSg "you" "gulp down"
        , MU.AW "magenta vial" ]
        "You gulp down a magenta vial."
   , tc [ MU.SubjectVerbSg "the magenta vial" "turn out to be"
-       , MU.CarWs 1 "vial of rose water" ]
+       , MU.CarAWs 1 "vial of rose water" ]
        "The magenta vial turns out to be a vial of rose water."
   , tc [ MU.SubjectVerbSg "deranged household robot" "trie to hit"
          <> ", but you block" ]
@@ -445,7 +453,7 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
        "Deranged household robot picks up 2 sharpened pipes (3d1) (+1)."
   , tc [ MU.SubjectVerbSg "deranged household robot" "hit"
        , MU.Text"you with", MU.CardinalWs 1 "sharpened pipe (3d1) (+1)" ]
-       "Deranged household robot hits you with a sharpened pipe (3d1) (+1)."
+       "Deranged household robot hits you with one sharpened pipe (3d1) (+1)."
   , tc [ MU.SubjectVerbSg "you" "kick"
        , "deranged household robot" ]
        "You kick deranged household robot."
@@ -474,7 +482,7 @@ testAllureOfTheStars = testGroup "Allure of the Stars utterances"
   , tc [ MU.SubjectVerbSg "deformed monkey" "hit"
        , "deranged household robot" ]
        "Deformed monkey hits deranged household robot."
-  , tc [ MU.SubjectVerbSg (MU.CarWs 1 "flying billiard ball (1d1)") "hit"
+  , tc [ MU.SubjectVerbSg (MU.CarAWs 1 "flying billiard ball (1d1)") "hit"
        , "deranged household robot" ]
        "A flying billiard ball (1d1) hits deranged household robot."
   , tc [ MU.SubjectVerbSg "deranged household robot" "hiss in pain" ]

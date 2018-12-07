@@ -23,9 +23,16 @@ data Part =
     String !String      -- ^ handle for a String parameter
   | Text !Text          -- ^ handle for a Text parameter
   | Cardinal !Int       -- ^ cardinal number, spelled in full up to 10
+  | Car !Int            -- ^ cardinal number, not spelled
   | Ws !Part            -- ^ plural form of a phrase
-  | CarWs !Int !Part       -- ^ plural prefixed with a cardinal, not spelled
-  | CardinalWs !Int !Part  -- ^ plural prefixed with a cardinal, spelled
+  | CardinalAWs !Int !Part
+                        -- ^ plural prefixed with a cardinal, spelled,
+                        --   with "a" for 1 and "no" for 0
+  | CardinalWs !Int !Part
+                        -- ^ plural prefixed with a cardinal, spelled
+  | CarAWs !Int !Part   -- ^ plural prefixed with a cardinal, not spelled,
+                        --   with "a" for 1 and "no" for 0
+  | CarWs !Int !Part    -- ^ plural prefixed with a cardinal, not spelled
   | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
   | Ord !Int            -- ^ ordinal number, not spelled
   | AW !Part            -- ^ phrase with indefinite article
@@ -39,12 +46,12 @@ data Part =
   | Capitalize !Part    -- ^ make the first letter into a capital letter
   | SubjectVerb !Person !Polarity !Part !Part
                         -- ^ conjugation according to polarity,
-                        -- with a default person (pronouns override it)
+                        --   with a default person (pronouns override it)
   | SubjectVerbSg !Part !Part
                         -- ^ a shorthand for Sg3rd and Yes
   | SubjectVVxV !Part !Person !Polarity !Part ![Part]
                         -- ^ conjugation of all verbs according to polarity,
-                        -- with a default person (pronouns override it)
+                        --   with a default person (pronouns override it)
   | SubjectVVandVSg !Part ![Part]
                         -- ^ a shorthand for "and", Sg3rd and Yes
   deriving (Show, Eq, Ord, Generic)
@@ -106,11 +113,18 @@ makePart irr part = case part of
   String t -> T.pack t
   Text t -> t
   Cardinal n -> cardinal n
+  Car n -> tshow n
   Ws p -> onLastWord (makePlural irr) (mkPart p)
-  CarWs 1 p -> mkPart (AW p)  -- TOOD: a variant without 'a'
-  CarWs n p -> T.pack (show n) <+> onLastWord (makePlural irr) (mkPart p)
-  CardinalWs 1 p -> mkPart (AW p)
+  CardinalAWs 0 p -> "no" <+> onLastWord (makePlural irr) (mkPart p)
+  CardinalAWs 1 p -> mkPart (AW p)
+  CardinalAWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
+  CardinalWs 1 p -> cardinal 1 <+> mkPart p
   CardinalWs n p -> cardinal n <+> onLastWord (makePlural irr) (mkPart p)
+  CarAWs 0 p -> "no" <+> onLastWord (makePlural irr) (mkPart p)
+  CarAWs 1 p -> mkPart (AW p)
+  CarAWs n p -> tshow n <+> onLastWord (makePlural irr) (mkPart p)
+  CarWs 1 p -> tshow (1 :: Int) <+> mkPart p
+  CarWs n p -> tshow n <+> onLastWord (makePlural irr) (mkPart p)
   Ordinal n -> ordinal n
   Ord n -> ordinalNotSpelled n
   AW p -> onFirstWord (addIndefinite irr) (mkPart p)
@@ -388,8 +402,8 @@ defIrrPlural = Map.fromList
   , ("hovercraft",  "hovercraft")
   , ("information", "information")
   , ("Information", "Information")
-  , ("whiff", "whiffs")
-  , ("graffiti", "graffiti")
+  , ("whiff",       "whiffs")
+  , ("graffiti",    "graffiti")
   ]
 
 -- | Default set of nouns with irregular indefinite article.
