@@ -2,10 +2,10 @@ name:          miniutter
 -- The package version. See the Haskell package versioning policy (PVP)
 -- for standards guiding when and how versions should be incremented.
 -- http://www.haskell.org/haskellwiki/Package_versioning_policy
--- PVP summary: +-+------- breaking API changes
---              | | +----- non-breaking API additions
---              | | | +--- code changes with no API change
-version:        0.4.7.0
+-- PVP summary:+-+------- breaking API changes
+--             | | +----- minor or non-breaking API additions
+--             | | | +--- code changes with no API change
+version:       0.5.0.0
 synopsis:      Simple English clause creation from arbitrary words
 description:   This library helps in generating simple present tense
                English sentences from short, parametrized descriptions.
