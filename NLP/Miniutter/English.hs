@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
-  ( Part(..), Person(..), Polarity(..), Irregular
+  ( Part(..), Person(..), Polarity(..), Irregular(..)
   , makeSentence, makePhrase, defIrregular, (<+>)
   ) where
 
@@ -91,11 +91,15 @@ instance Binary Polarity
 
 -- | Nouns with irregular plural form and nouns with irregular indefinite
 -- article.
-type Irregular = (Map Text Text, Map Text Text)
+data Irregular = Irregular
+  { irrPlural     :: Map Text Text
+  , irrIndefinite :: Map Text Text
+  }
 
 -- | Default set of words with irregular forms.
 defIrregular :: Irregular
-defIrregular = (defIrrPlural, defIrrIndefinite)
+defIrregular =
+  Irregular {irrPlural = defIrrPlural, irrIndefinite = defIrrIndefinite}
 
 -- | Realise a complete sentence, capitalized, ending with a dot.
 makeSentence :: Irregular -> [Part] -> Text
@@ -206,13 +210,13 @@ capitalize t = case T.uncons t of
   Just (c, rest) -> T.cons (toUpper c) rest
 
 makePlural :: Irregular -> Text -> Text
-makePlural (irrPlural, _) t =
+makePlural Irregular{irrPlural} t =
   case Map.lookup t irrPlural of
     Just u  -> u
     Nothing -> defaultNounPlural t
 
 addIndefinite :: Irregular -> Text -> Text
-addIndefinite (_, irrIndefinite) t =
+addIndefinite Irregular{irrIndefinite} t =
   case Map.lookup t irrIndefinite of
     Just u  -> u <+> t
     Nothing -> indefiniteDet t <+> t
