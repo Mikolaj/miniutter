@@ -20,7 +20,7 @@ homepage:      https://github.com/Mikolaj/miniutter
 bug-reports:   https://github.com/Mikolaj/miniutter/issues
 license:       BSD3
 license-file:  LICENSE
-tested-with:   GHC >= 7.4.2 && <= 8.4
+tested-with:   GHC >= 7.4 && <= 8.6
 data-files:    LICENSE, README.md
 author:        Mikolaj Konarski
 maintainer:    Mikolaj Konarski <mikolaj.konarski@funktory.com>
@@ -34,7 +34,6 @@ source-repository head
 
 library
   exposed-modules:    NLP.Miniutter.English
---  other-modules:
   build-depends:      base                 >= 4        && < 5,
                       binary               >= 0.6.3.0  && < 1,
                       text                 >= 0.11.2.3 && < 2,
