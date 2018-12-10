@@ -49,7 +49,6 @@ library
                       BangPatterns, RecordWildCards, NamedFieldPuns, MultiWayIf,
                       LambdaCase, DefaultSignatures, InstanceSigs,
                       MonadFailDesugaring, StrictData, CPP
-  other-extensions:   OverloadedStrings
   ghc-options:        -Wall -Wcompat -Worphans -Wincomplete-uni-patterns -Wincomplete-record-updates -Wmissing-home-modules -Widentities -Wredundant-constraints
   ghc-options:        -Wall-missed-specialisations
   ghc-options:        -fno-ignore-asserts -fexpose-all-unfoldings -fspecialise-aggressively
@@ -78,7 +77,6 @@ test-suite test-miniutter
                       BangPatterns, RecordWildCards, NamedFieldPuns, MultiWayIf,
                       LambdaCase, DefaultSignatures, InstanceSigs,
                       MonadFailDesugaring, StrictData, CPP
-  other-extensions:   OverloadedStrings
   ghc-options:        -Wall -Wcompat -Worphans -Wincomplete-uni-patterns -Wincomplete-record-updates -Wmissing-home-modules -Widentities -Wredundant-constraints
   ghc-options:        -Wall-missed-specialisations
   ghc-options:        -fno-ignore-asserts -fexpose-all-unfoldings -fspecialise-aggressively

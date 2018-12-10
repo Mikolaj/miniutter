@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 -- | Simple English clause creation parameterized by individual words.
 module NLP.Miniutter.English
   ( Part(..), Person(..), Polarity(..), Irregular(..)
