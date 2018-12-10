@@ -20,18 +20,18 @@ import           NLP.Minimorph.Util hiding ((<>))
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
 data Part =
-    String !String      -- ^ handle for a String parameter
-  | Text !Text          -- ^ handle for a Text parameter
+    String !String      -- ^ handle for a @String@ parameter
+  | Text !Text          -- ^ handle for a @Text@ parameter
   | Cardinal !Int       -- ^ cardinal number, spelled in full up to 10
   | Car !Int            -- ^ cardinal number, not spelled
   | Ws !Part            -- ^ plural form of a phrase
   | CardinalAWs !Int !Part
                         -- ^ plural prefixed with a cardinal, spelled,
-                        --   with "a" for 1 and "no" for 0
+                        --   with \"a\" for 1 and \"no\" for 0
   | CardinalWs !Int !Part
                         -- ^ plural prefixed with a cardinal, spelled
   | CarAWs !Int !Part   -- ^ plural prefixed with a cardinal, not spelled,
-                        --   with "a" for 1 and "no" for 0
+                        --   with \"a\" for 1 and \"no\" for 0
   | CarWs !Int !Part    -- ^ plural prefixed with a cardinal, not spelled;
   | Car1Ws !Int !Part   -- ^ plural prefixed with a cardinal, not spelled;
                         --   no prefix at all for 1
@@ -50,12 +50,12 @@ data Part =
                         -- ^ conjugation according to polarity,
                         --   with a default person (pronouns override it)
   | SubjectVerbSg !Part !Part
-                        -- ^ a shorthand for Sg3rd and Yes
+                        -- ^ a shorthand for @Sg3rd@ and @Yes@
   | SubjectVVxV !Part !Person !Polarity !Part ![Part]
                         -- ^ conjugation of all verbs according to polarity,
                         --   with a default person (pronouns override it)
   | SubjectVVandVSg !Part ![Part]
-                        -- ^ a shorthand for "and", Sg3rd and Yes
+                        -- ^ a shorthand for \"and\", @Sg3rd@ and @Yes@
   deriving (Show, Eq, Ord, Generic)
 
 instance Binary Part
