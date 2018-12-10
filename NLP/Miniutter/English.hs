@@ -42,8 +42,7 @@ data Part =
   | WWxW !Part ![Part]  -- ^ collection
   | Wown !Part          -- ^ non-premodifying possesive
   | WownW !Part !Part   -- ^ attributive possesive
-  | Append !Part !Part  -- ^ no space in between
-  | !Part :> !Part      -- ^ no space in between  -- deprecated, use <>
+  | Append !Part !Part  -- ^ no space in between; one can also just use @<>@
   | Phrase ![Part]      -- ^ space-separated sequence
   | Capitalize !Part    -- ^ make the first letter into a capital letter
   | SubjectVerb !Person !Polarity !Part !Part
@@ -146,7 +145,6 @@ makePart irr part = case part of
   WownW p1 p2 -> onLastWord attributive (mkPart p1) <+> mkPart p2
   Phrase lp -> makePhrase irr lp
   Append p1 p2 -> mkPart p1 <> mkPart p2
-  p1 :> p2 -> mkPart p1 <> mkPart p2
   Capitalize p -> capitalize $ mkPart p
   SubjectVerb defaultPerson Yes s v ->
     subjectVerb defaultPerson (mkPart s) (mkPart v)
