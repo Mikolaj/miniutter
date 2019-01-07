@@ -32,9 +32,9 @@ data Part =
                         -- ^ plural prefixed with a cardinal, spelled
   | CarAWs !Int !Part   -- ^ plural prefixed with a cardinal, not spelled,
                         --   with \"a\" for 1 and \"no\" for 0
-  | CarWs !Int !Part    -- ^ plural prefixed with a cardinal, not spelled;
-  | Car1Ws !Int !Part   -- ^ plural prefixed with a cardinal, not spelled;
-                        --   no prefix at all for 1
+  | CarWs !Int !Part    -- ^ plural prefixed with a cardinal, not spelled
+  | Car1Ws !Int !Part   -- ^ plural prefixed with a cardinal, not spelled,
+                        --   with no prefix at all for 1
   | Ordinal !Int        -- ^ ordinal number, spelled in full up to 10
   | Ord !Int            -- ^ ordinal number, not spelled
   | AW !Part            -- ^ phrase with indefinite article
@@ -360,28 +360,22 @@ attributive t = defaultPossesive t
 -- TODO: use a suffix tree, to catch ableman, seaman, etc.?
 -- | Default set of nouns with irregular plural form.
 defIrrPlural :: Map Text Text
-defIrrPlural = Map.fromList
+defIrrPlural = Map.fromList $ concatMap generateCapitalized $
   [ ("bro",         "bros")
-  , ("Bro",         "Bros")
   , ("canto",       "cantos")
   , ("homo",        "homos")
   , ("photo",       "photos")
-  , ("Photo",       "Photos")
   , ("zero",        "zeros")
   , ("piano",       "pianos")
-  , ("Piano",       "Pianos")
   , ("portico",     "porticos")
   , ("pro",         "pros")
   , ("quarto",      "quartos")
   , ("kimono",      "kimonos")
   , ("knife",       "knives")
-  , ("Knife",       "Knives")
   , ("life",        "lives")
-  , ("Life",        "Lives")
   , ("dwarf",       "dwarfs")  -- not for ME dwarves though
   , ("proof",       "proofs")
   , ("roof",        "roofs")
-  , ("Roof",        "Roofs")
   , ("turf",        "turfs")
   , ("child",       "children")
   , ("foot",        "feet")
@@ -401,16 +395,19 @@ defIrrPlural = Map.fromList
   , ("trout",       "trout")
   , ("swine",       "swine")
   , ("aircraft",    "aircraft")
-  , ("Aircraft",    "Aircraft")
   , ("watercraft",  "watercraft")
   , ("spacecraft",  "spacecraft")
-  , ("Spacecraft",  "Spacecraft")
   , ("hovercraft",  "hovercraft")
   , ("information", "information")
-  , ("Information", "Information")
   , ("whiff",       "whiffs")
   , ("graffiti",    "graffiti")
   ]
+
+generateCapitalized :: (Text, Text) -> [(Text, Text)]
+generateCapitalized (t1, t2) =
+  let t1C = capitalize t1
+      t2C = capitalize t2
+  in if t1 == t1C then [(t1, t2)] else [(t1, t2), (t1C, t2C)]
 
 -- | Default set of nouns with irregular indefinite article.
 defIrrIndefinite :: Map Text Text
