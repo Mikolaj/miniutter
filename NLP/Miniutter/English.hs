@@ -9,13 +9,17 @@ import           Data.Binary
 import           Data.Char (isAlphaNum, toUpper)
 import           Data.Map (Map)
 import qualified Data.Map as Map
-import           Data.Semigroup as Sem
 import           Data.String (IsString (..))
 import           Data.Text (Text)
 import qualified Data.Text as T
 import           GHC.Generics (Generic)
 import           NLP.Minimorph.English
 import           NLP.Minimorph.Util hiding ((<>))
+
+#if !(MIN_VERSION_base(4,11,0))
+  -- this is redundant starting with base-4.11 / GHC 8.4
+import Data.Semigroup
+#endif
 
 -- | Various basic and compound parts of English simple present tense clauses.
 -- Many of the possible nestings do not make sense. We don't care.
@@ -65,7 +69,7 @@ instance Read Part where
 instance IsString Part where
   fromString = Text . T.pack
 
-instance Sem.Semigroup Part where
+instance Semigroup Part where
   (<>) = Append
 
 instance Monoid Part where
