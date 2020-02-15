@@ -6,7 +6,7 @@ module NLP.Miniutter.English
   ) where
 
 import           Data.Binary
-import           Data.Char (isAlphaNum, toUpper)
+import           Data.Char (isAlphaNum, isSpace, toUpper)
 import           Data.Map (Map)
 import qualified Data.Map as Map
 import           Data.String (IsString (..))
@@ -182,15 +182,23 @@ onFirstWord f t =
 
 onLastWord :: (Text -> Text) -> Text -> Text
 onLastWord f t =
-  let (spanPrefix, spanRest) = T.span isWordLetter $ T.reverse t
+  -- First ignore (and append afterwards) a suffix composed not of possible
+  -- word letters and also of any trailing whitespace. We don't want
+  -- to pluralise whitespace nor symbols, but neither to lose them.
+  let (wordPrefix, nonWordSuffix) =
+        let (wordP, nonWordP) = T.span (\c -> isWordLetter c || isSpace c) t
+            (wordSpaceR, wordRestR) = T.span isSpace $ T.reverse wordP
+        in (T.reverse wordRestR, T.reverse wordSpaceR <> nonWordP)
+      (spanPrefix, spanRest) = T.span isWordLetter $ T.reverse wordPrefix
       (ending, restRaw) = (T.reverse spanPrefix, T.reverse spanRest)
       rest = T.dropWhile (not . isWordLetter) restRaw
       fending = f ending
-  in if T.null ending
-     then t
-     else if T.null fending
-          then rest
-          else restRaw <> f ending
+      onLast = if T.null ending
+               then wordPrefix
+               else if T.null fending
+                    then rest
+                    else restRaw <> f ending
+  in onLast <> nonWordSuffix
 
 onFirstWordPair :: (Text -> (Text, Text)) -> Text -> (Text, Text)
 onFirstWordPair f t =
