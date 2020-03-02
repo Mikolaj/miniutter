@@ -1,11 +1,15 @@
 module Main where
 
-import           Data.Monoid
 import qualified Data.Text as T
 
 import Test.Framework (Test, defaultMain, testGroup)
 import Test.Framework.Providers.HUnit (testCase)
 import Test.HUnit (assertEqual)
+
+#if !(MIN_VERSION_base(4,11,0))
+  -- this is redundant starting with base-4.11 / GHC 8.4
+import Data.Semigroup
+#endif
 
 import qualified NLP.Miniutter.English as MU
 

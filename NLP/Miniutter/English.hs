@@ -14,7 +14,7 @@ import           Data.Text (Text)
 import qualified Data.Text as T
 import           GHC.Generics (Generic)
 import           NLP.Minimorph.English
-import           NLP.Minimorph.Util hiding ((<>))
+import           NLP.Minimorph.Util
 
 #if !(MIN_VERSION_base(4,11,0))
   -- this is redundant starting with base-4.11 / GHC 8.4
