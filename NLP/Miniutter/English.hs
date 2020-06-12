@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 -- | Simple English clause creation parameterized by individual words.
+-- See the tests for example texts generated.
 module NLP.Miniutter.English
   ( Part(..), Person(..), Polarity(..), Irregular(..)
   , makeSentence, makePhrase, defIrregular, (<+>)
