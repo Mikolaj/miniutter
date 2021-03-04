@@ -414,6 +414,7 @@ defIrrPlural = Map.fromList $ concatMap generateCapitalized $
   , ("information", "information")
   , ("whiff",       "whiffs")
   , ("graffiti",    "graffiti")
+  , ("stomach",     "stomachs")
   ]
 
 generateCapitalized :: (Text, Text) -> [(Text, Text)]
