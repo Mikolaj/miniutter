@@ -1,7 +1,6 @@
 miniutter
 =========
 
-[![Build Status](https://secure.travis-ci.org/Mikolaj/miniutter.png)](http://travis-ci.org/Mikolaj/miniutter)
 [![Hackage](https://img.shields.io/hackage/v/miniutter.svg)](https://hackage.haskell.org/package/miniutter)
 
 This library helps in generating simple present tense
