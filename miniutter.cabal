@@ -5,7 +5,7 @@ name:          miniutter
 -- PVP summary:+-+------- breaking API changes
 --             | | +----- minor or non-breaking API additions
 --             | | | +--- code changes with no API change
-version:       0.5.1.1
+version:       0.5.1.2
 synopsis:      Simple English clause creation from arbitrary words
 description:   This library helps in generating simple present tense
                English sentences from short, parametrized descriptions.
@@ -33,9 +33,9 @@ source-repository head
 
 library
   exposed-modules:    NLP.Miniutter.English
-  build-depends:      base                 >= 4.7      && < 5,
+  build-depends:      base                 >= 4.7      && < 99,
                       binary               >= 0.6.3.0  && < 1,
-                      text                 >= 0.11.2.3 && < 2,
+                      text                 >= 0.11.2.3,
                       containers           >= 0.4.1    && < 1,
                       minimorph            >= 0.3.0.0  && < 1
   if !impl(ghc >= 8.0)
