@@ -24,7 +24,7 @@ tests =
     , testMakePhraseNumber
     , testMakePhraseIndefinite
     , testMakePhraseEnumeration
-    , testMakePhrasePossesive
+    , testMakePhrasePossessive
     , testMakePhraseSubjectVerb
     , testMakePhraseSubjectVVxV
     , testAllureOfTheStars
@@ -253,8 +253,8 @@ testMakePhraseEnumeration = testGroup "enumeration and collection"
                                           " dog  and perhaps% %eagle."
   ]
 
-testMakePhrasePossesive :: Test
-testMakePhrasePossesive = testGroup "the possesive form"
+testMakePhrasePossessive :: Test
+testMakePhrasePossessive = testGroup "the possessive form"
   [ tp [MU.Wown (MU.String "uncle")]   "uncle's"
   , tp [MU.Wown (MU.String " uncle ")] " uncle's "
   , tp [MU.Wown ""]                    ""
