@@ -45,8 +45,8 @@ data Part =
   | AW !Part            -- ^ phrase with indefinite article
   | WWandW ![Part]      -- ^ enumeration
   | WWxW !Part ![Part]  -- ^ collection
-  | Wown !Part          -- ^ non-premodifying possesive
-  | WownW !Part !Part   -- ^ attributive possesive
+  | Wown !Part          -- ^ non-premodifying possessive
+  | WownW !Part !Part   -- ^ attributive possessive
   | Append !Part !Part  -- ^ no space in between; one can also just use @<>@
   | Phrase ![Part]      -- ^ space-separated sequence
   | Capitalize !Part    -- ^ make the first letter into a capital letter
@@ -350,7 +350,7 @@ nonPremodifying "we"   = "ours"
 nonPremodifying "We"   = "Ours"
 nonPremodifying "they" = "theirs"
 nonPremodifying "They" = "Theirs"
-nonPremodifying t = defaultPossesive t
+nonPremodifying t = defaultPossessive t
 
 attributive :: Text -> Text
 attributive "who"  = "whose"
@@ -368,7 +368,7 @@ attributive "we"   = "our"
 attributive "We"   = "Our"
 attributive "they" = "their"
 attributive "They" = "Their"
-attributive t = defaultPossesive t
+attributive t = defaultPossessive t
 
 -- TODO: use a suffix tree, to catch ableman, seaman, etc.?
 -- | Default set of nouns with irregular plural form.
